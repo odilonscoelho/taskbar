@@ -51,7 +51,6 @@ O conjunto de scripts fornecem uma maneira de desenhar na polybar via módulos I
 	 format-background = ${colors.foreground}
 	 click-left = taskbar.zsh foco 1
 	 click-right = taskbar.zsh close 1
-	 click-middle = polybar-msg -p %pid% hook x1 2
 	 scroll-up = taskbar.zsh tiled 1
 	 scroll-down = taskbar.zsh floating 1
 	```
@@ -67,17 +66,49 @@ O conjunto de scripts fornecem uma maneira de desenhar na polybar via módulos I
 	 format-background = ${colors.foreground}
 	 click-left = taskbar.zsh foco 2
 	 click-right = taskbar.zsh close 2
-	 click-middle = polybar-msg -p %pid% hook x2 2
 	 scroll-up = taskbar.zsh tiled 2
 	 scroll-down = taskbar.zsh floating 2
 	```
 
-
-	
+	* i3wm
 	```
+	[module/x1]
+	type = custom/ipc
+	hook-0 = echo
+	hook-1 = taskbar.zsh labeli3 1
+	hook-2 = taskbar.zsh labelmin 1
+	initial = 1
+	format-padding = 1
+	format-foreground = ${colors.background}
+	format-background = ${colors.foreground}
+	click-left = taskbar.zsh foco 1
+	click-right = taskbar.zsh close 1
+	click-middle = polybar-msg -p %pid% hook x1 2
+	scroll-up = taskbar.zsh i3floating 1
+	scroll-down = taskbar.zsh i3floating 1
+	```
+	```
+	[module/x2]
+	type = custom/ipc
+	hook-0 = echo
+	hook-1 = taskbar.zsh labeli3 2
+	hook-2 = taskbar.zsh labelmin 2
+	initial = 1
+	format-padding = 1
+	format-foreground = ${colors.background}
+	format-background = ${colors.foreground}
+	click-left = taskbar.zsh foco 2
+	click-right = taskbar.zsh close 2
+	click-middle = polybar-msg -p %pid% hook x2 2
+	scroll-up = taskbar.zsh i3floating 2
+	scroll-down = taskbar.zsh i3floating 2
+	```
+
 	* Geral polybar
+	```
  	modules-{center,left ou right} = x1 x2 x3 x4.....
 	```
+	
 4. Início automático
 	* bspwm
 	* Adicione ao bspwmrc:
