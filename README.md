@@ -37,12 +37,10 @@ O conjunto de scripts fornecem uma maneira de desenhar na polybar via módulos I
 3. crie um link ou copie **taskbar.zsh** para o seu path.
 
 4. crie os módulos da polybar de acordo com sua twm, você pode adicionar quantos módulos quiser, particularmente acho 20 um número suficiente em uma barra dedicada só para os módulos da taskbar. ;) :
-
-	* bspwm
-	
-	> [module/x1]
-	> type = custom/ipc 
-	hook-0 = echo 
+bspwm
+> [module/x1]
+> type = custom/ipc 
+> hook-0 = echo 
 	hook-1 = taskbar.zsh label 1 
 	hook-2 = taskbar.zsh 
 
