@@ -10,20 +10,20 @@ taskbar - labels de janelas para polybar - bspwm/i3wm
 
 O conjunto de scripts fornecem uma maneira de desenhar na polybar via módulos IPC (polybar-msg) as labels das janelas ativas.
 
-* taskbar.zsh
+* **taskbar.zsh**
 	* taskbar.zsh é apenas um direcionador, que carrega as funções disponíveis em taskbar.func.zsh e as executa. 
 	* Quando chamado com a função start:
-	> **taskbar.zsh start**
+		> **taskbar.zsh start**
 	* inicia o backend *taskbar.program.zsh*, responsável por gerar as informações no arquivo */tmp/taskbar* (títulos, workspace, programa e id de cada janela ativa), que serão usados para desenhar as labels nos módulos da polybar e automatizar funções com mouse (módulo polybar) ou shell a partir dos ids disponíveis.
 
-* taskbar.icons.zsh
+* **taskbar.icons.zsh**
 	* É onde você pode atribuir os icones (fontes com glifos) que quer utilizar para os programas, há comentários no script sobre como proceder com o nome das aplicações ao atribuir um ícone a um novo programa, há possibilidade de atribuir um ícone **default** que será usado para programas ainda não atribuídos.
 
-* taskbar.func.zsh
+* **taskbar.func.zsh**
 	* script que contém as funções de chamadas front-end do programa, literalmente as funções necessárias para desenhar os módulos, iniciar e parar o back-end.
 	* Esse script não é executado diretamente, apenas tem suas funções importadas e executadas por taskbar.zsh, isso vale para o backend que tbm é iniciado pela função *start* desse script.
 
-* taskbar.program.zsh
+* **taskbar.program.zsh**
 	* Programa back-end responsável por monitorar o estado das janelas e atualizar o arquivo /tmp/taskbar.
 
 
@@ -109,10 +109,10 @@ O conjunto de scripts fornecem uma maneira de desenhar na polybar via módulos I
 
 5. Início automático
 	* bspwm - adicione ao bspwmrc:
-	> taskbar.zsh start
+	> **taskbar.zsh start**
 
 	* i3wm - adicione ao seu config:
-	> exec_always --no-startup-id taskbar.zsh start
+	> **exec_always --no-startup-id taskbar.zsh start**
 
 
 ## Funções
@@ -120,7 +120,7 @@ O conjunto de scripts fornecem uma maneira de desenhar na polybar via módulos I
 Ao atribuir novos ícones, pare e reinicie o backend.
 
 * Stop
-> taskbar.zsh stop
+> **taskbar.zsh stop**
 
 * Start
-> taskbar.zsh start
+> **taskbar.zsh start**
