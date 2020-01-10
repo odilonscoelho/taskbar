@@ -38,13 +38,15 @@ O conjunto de scripts fornecem uma maneira de desenhar na polybar via módulos I
 
 4. crie os módulos da polybar de acordo com sua twm, você pode adicionar quantos módulos quiser, particularmente acho 20 um número suficiente em uma barra dedicada só para os módulos da taskbar. ;) :
 	* bspwm
-	> [module/x1]		
+	> [module/x1]
+	> test
+
 
 
 	 
 
-* Geral polybar
-> modules-{center,left ou right} = x1 x2 x3 x4.....
+	* Geral polybar
+	> modules-{center,left ou right} = x1 x2 x3 x4.....
 
 4. Início automático
 	* bspwm
