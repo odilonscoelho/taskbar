@@ -47,6 +47,7 @@ O conjunto de scripts fornecem uma maneira de desenhar na polybar via módulos I
 
 	* Geral polybar
 	> modules-{center,left ou right} = x1 x2 x3 x4.....
+	> test
 
 4. Início automático
 	* bspwm
