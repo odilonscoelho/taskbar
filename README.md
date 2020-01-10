@@ -12,7 +12,9 @@ O conjunto de scripts fornecem uma maneira de desenhar na polybar via módulos I
 
 * taskbar.zsh
 	* taskbar.zsh é apenas um direcionador, que carrega as funções disponíveis em taskbar.func.zsh e as executa. 
-	* Quando chamado com a função start *__$taskbar.zsh start__* - inicia o backend *taskbar.program.zsh*, responsável por gerar as informações no arquivo */tmp/taskbar* (títulos, workspace, programa e id de cada janela ativa), que serão usados para desenhar as labels nos módulos da polybar, e automatizar funções com mouse (módulo polybar) ou shell a partir dos ids disponíveis.
+	* Quando chamado com a função start:
+	> *taskbar.zsh start* 
+	inicia o backend *taskbar.program.zsh*, responsável por gerar as informações no arquivo */tmp/taskbar* (títulos, workspace, programa e id de cada janela ativa), que serão usados para desenhar as labels nos módulos da polybar, e automatizar funções com mouse (módulo polybar) ou shell a partir dos ids disponíveis.
 
 * taskbar.icons.zsh
 	* É onde vocẽ pode atribuir os icones que quer utilizar para programa, há comentários no script sobre como proceder com o nome da aplicação ao atribuir um novo programa.
