@@ -69,6 +69,7 @@ O conjunto de scripts fornecem uma maneira de desenhar na polybar via módulos I
 		
 		> scroll-down = taskbar.zsh floating 1
 
+		>
 		
 		> [module/x2]
 
