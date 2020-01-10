@@ -116,14 +116,14 @@ O conjunto de scripts fornecem uma maneira de desenhar na polybar via módulos I
 
 
 ## Funções
-
-	* Stop
-	> taskbar.zsh stop
-
-	* Start
-	> taskbar.zsh start
-
 	* Ao atribuir novos ícones, pare e reinicie o backend.
+		* Stop
+		> taskbar.zsh stop
+	
+		* Start
+		> taskbar.zsh start
+
+	
 
 
 
