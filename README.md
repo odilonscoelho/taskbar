@@ -6,9 +6,9 @@ O programa roda em backend, monitorando o estado das janelas ativas, a cada alte
 
 
 ##Dependencias
-*zsh - não precisa ser seu shell padrão mas precisa estar instalado, pois é por meio dele que o programa garante a eficácia das chamadas, fique a vontade para adaptá-lo para o bash/sh ou posix.
-*wmctrl - utilitário para informações e controle de janelas abertas.
-*xwinfo - utilitário para informações e controle de janelas abertas.
-*polybar*
+#####zsh - não precisa ser seu shell padrão mas precisa estar instalado, pois é por meio dele que o programa garante a eficácia das chamadas, fique a vontade para adaptá-lo para o bash/sh ou posix.
+#####wmctrl - utilitário para informações e controle de janelas abertas.
+#####xwinfo - utilitário para informações e controle de janelas abertas.
+#####polybar
 
 
