@@ -40,8 +40,6 @@ O conjunto de scripts fornecem uma maneira de desenhar na polybar via módulos I
 	
   * bspwm
 	 
-	 >
-
 	 [module/x1]
 
 	 type = custom/ipc
@@ -69,8 +67,6 @@ O conjunto de scripts fornecem uma maneira de desenhar na polybar via módulos I
 	 scroll-up = taskbar.zsh tiled 1
 	 
 	 scroll-down = taskbar.zsh floating 1
-
-	 >
 
  Geral polybar
  modules-{center,left ou right} = x1 x2 x3 x4.....
