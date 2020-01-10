@@ -40,8 +40,9 @@ O conjunto de scripts fornecem uma maneira de desenhar na polybar via módulos I
 
 	* bspwm
 	> [module/x1]
-	 type = custom/ipc
-	 hook-0 = echo
+	> type = custom/ipc
+	> hook-0 = echo
+	
 	 hook-1 = taskbar.zsh label 1
 	 hook-2 = taskbar.zsh labelmin 1
 	 initial = 1
