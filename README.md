@@ -51,7 +51,7 @@ O conjunto de scripts fornecem uma maneira de desenhar na polybar via módulos I
 	> click-right = taskbar.zsh close 1
 	> scroll-up = taskbar.zsh tiled 1
 	> scroll-down = taskbar.zsh floating 1
-> 
+	>
 	> [module/x2]
 	> type = custom/ipc
 	> hook-0 = echo
@@ -80,7 +80,7 @@ O conjunto de scripts fornecem uma maneira de desenhar na polybar via módulos I
 	> click-right = taskbar.zsh close 1
 	> scroll-up = taskbar.zsh i3floating 1
 	> scroll-down = taskbar.zsh i3floating 1
-> 
+	> 
 	> [module/x2]
 	> type = custom/ipc
 	> hook-0 = echo
