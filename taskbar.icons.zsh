@@ -1,0 +1,63 @@
+#!/bin/zsh
+#---------------ICONS----------------#
+#icons => atribuir o nome dos programas sem hífen '-' , exemplo telegram-desktop fica telegramdesktop
+#para pesquisar como um programa se chama ao adicioná-lo, use o seu id (disponivel em /tmp/taskbar) para pesquisar com
+#xwinfo -i <id>, isso retornará a classe instancia da janela que será usado como o nome do programa.
+xterm=
+termite=
+qutebrowser=
+firefox=
+pulseaudioequalizergtk=爛
+nitrogen=
+subl3=
+pamacmanager= 
+Steam=
+manjarosettingsmanager=
+thunar=
+nmconnectioneditor=
+nvidiasettings=
+qt5ct=
+lxappearance=
+color=
+oomox=
+arandr=
+telegramdesktop=
+whatsie=
+smplayer=
+mpv=
+gl= 
+xviewer=
+lximageqt=
+pavucontrol=
+nemo=
+ranger=
+strike=𥳐
+csgo_linux64=
+simplescreenrecorder=
+spyder=
+python=
+libreoffice=
+youtube=
+vim=
+gcolor2=
+codeoss=﬏
+yad=
+gimp2=
+xreader=
+pcmanfm=
+qtwebflix=𥳐
+feh=
+gucharmap=
+default=
+#ícones dos workspaces, caso não queira usá-los, altere por numeros, nomes o o que desejar;
+#essa descrição aparecerá na frente do título da janela.
+w1=""
+w2=""
+w3=""
+w4=""
+w5=""
+w6=""
+w7=""
+w8=""
+w9=""
+w10=""
