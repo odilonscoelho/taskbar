@@ -39,7 +39,6 @@ O conjunto de scripts fornecem uma maneira de desenhar na polybar via módulos I
 4. crie os módulos da polybar de acordo com sua twm, você pode adicionar quantos módulos quiser, particularmente acho 20 um número suficiente em uma barra dedicada só para os módulos da taskbar. ;) :
 
 	* bspwm
-
 	> [module/x1]
 	> type = custom/ipc
 	> hook-0 = echo
@@ -53,7 +52,7 @@ O conjunto de scripts fornecem uma maneira de desenhar na polybar via módulos I
 	> click-right = taskbar.zsh close 1
 	> scroll-up = taskbar.zsh tiled 1
 	> scroll-down = taskbar.zsh floating 1 	
-	>	
+	>
 	> [module/x2]
 	> type = custom/ipc
 	> hook-0 = echo
@@ -69,37 +68,36 @@ O conjunto de scripts fornecem uma maneira de desenhar na polybar via módulos I
 	> scroll-down = taskbar.zsh floating 2
 
 	* i3wm
-
-		[module/x1]
-		type = custom/ipc
-		hook-0 = echo
-		hook-1 = taskbar.zsh labeli3 1
-		hook-2 = taskbar.zsh labelmin 1
-		initial = 1
-		format-padding = 1
-		format-foreground = ${colors.background}
-		format-background = ${colors.foreground}
-		click-left = taskbar.zsh foco 1
-		click-right = taskbar.zsh close 1
-		scroll-up = taskbar.zsh i3floating 1
-		scroll-down = taskbar.zsh i3floating 1
-	
-		[module/x2]
-		type = custom/ipc
-		hook-0 = echo
-		hook-1 = taskbar.zsh labeli3 2
-		hook-2 = taskbar.zsh labelmin 2
-		initial = 1
-		format-padding = 1
-		format-foreground = ${colors.background}
-		format-background = ${colors.foreground}
-		click-left = taskbar.zsh foco 2
-		click-right = taskbar.zsh close 2
-		scroll-up = taskbar.zsh i3floating 2
-		scroll-down = taskbar.zsh i3floating 2
+	> [module/x1]
+	> type = custom/ipc
+	> hook-0 = echo
+	> hook-1 = taskbar.zsh labeli3 1
+	> hook-2 = taskbar.zsh labelmin 1
+	> initial = 1
+	> format-padding = 1
+	> format-foreground = ${colors.background}
+	> format-background = ${colors.foreground}
+	> click-left = taskbar.zsh foco 1
+	> click-right = taskbar.zsh close 1
+	> scroll-up = taskbar.zsh i3floating 1
+	> scroll-down = taskbar.zsh i3floating 1
+	> 
+	> [module/x2]
+	> type = custom/ipc
+	> hook-0 = echo
+	> hook-1 = taskbar.zsh labeli3 2
+	> hook-2 = taskbar.zsh labelmin 2
+	> initial = 1
+	> format-padding = 1
+	> format-foreground = ${colors.background}
+	> format-background = ${colors.foreground}
+	> click-left = taskbar.zsh foco 2
+	> click-right = taskbar.zsh close 2
+	> scroll-up = taskbar.zsh i3floating 2
+	> scroll-down = taskbar.zsh i3floating 2
 
 	* Geral polybar
-		* modules-{center,left ou right} = x1 x2 x3 x4.....
+	> modules-{center,left ou right} = x1 x2 x3 x4.....
 
 4. Início automático
 	* bspwm
