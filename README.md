@@ -38,6 +38,7 @@ O conjunto de scripts fornecem uma maneira de desenhar na polybar via módulos I
 
 4. crie os módulos da polybar de acordo com sua twm, você pode adicionar quantos módulos quiser, particularmente acho 20 um número suficiente em uma barra dedicada só para os módulos da taskbar. ;) :
 	* bspwm
+	
 		> [module/x1]
 		> type = custom/ipc
 		> hook-0 = echo
@@ -67,6 +68,7 @@ O conjunto de scripts fornecem uma maneira de desenhar na polybar via módulos I
 		> scroll-down = taskbar.zsh floating 2
 
 	* i3wm
+		
 		> [module/x1]
 		> type = custom/ipc
 		> hook-0 = echo
