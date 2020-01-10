@@ -40,7 +40,9 @@ O conjunto de scripts fornecem uma maneira de desenhar na polybar via módulos I
 	
   * bspwm
 	 
-	 > "[module/x1]
+	 >
+
+	 [module/x1]
 	 type = custom/ipc
 	 hook-0 = echo
 	 hook-1 = taskbar.zsh label 1
@@ -53,7 +55,9 @@ O conjunto de scripts fornecem uma maneira de desenhar na polybar via módulos I
 	 click-right = taskbar.zsh close 1
 	 click-middle = polybar-msg -p %pid% hook x1 2
 	 scroll-up = taskbar.zsh tiled 1
-	 scroll-down = taskbar.zsh floating 1"
+	 scroll-down = taskbar.zsh floating 1
+
+	 >
 
  Geral polybar
  modules-{center,left ou right} = x1 x2 x3 x4.....
