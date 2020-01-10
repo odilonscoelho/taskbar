@@ -115,5 +115,15 @@ O conjunto de scripts fornecem uma maneira de desenhar na polybar via módulos I
 	> exec_always --no-startup-id taskbar.zsh start
 
 
+## Funções
+
+	* Stop
+	> taskbar.zsh stop
+
+	* Start
+	> taskbar.zsh start
+
+	* Ao atribuir novos ícones, pare e reinicie o backend.
+
 
 
