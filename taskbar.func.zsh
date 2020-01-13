@@ -1,12 +1,15 @@
 #!/bin/zsh
-foco () {wmctrl -i -a "$(sed -n $1'p' $bd |awk {'print $2'})"}
-close () {wmctrl -i -c "$(sed -n $1'p' $bd |awk {'print $2'})"}
+foco.bkp () {wmctrl -i -a "$(sed -n $1'p' $bd |awk {'print $2'})"}
+foco () {wmctrl -i -a "$(sed -n $1'p' <<< $(awk {'print $2'} $bd))"}
+close.bkp () {wmctrl -i -c "$(sed -n $1'p' $bd |awk {'print $2'})"}
+close () {wmctrl -i -c "$(sed -n $1'p' <<< $(awk {'print $2'} $bd))"}
 fullscreen () {wmctrl -i -r "$(sed -n $1'p' $bd |awk {'print $2'})" -b toggle,fullscreen}
 monitores () {xrandr|grep -E "'[A-Z]'|connected "|grep -v "disconnect"|awk {'print $1'}|sed -n $1'p'}
 
 #BSPC
 labelmin () {printf '%4s' "$(printf '%-1s' "%{T1}%{T-}") $(sed -n $1'p' $bd|awk {'print "%{T2}"$3"%{T-}"'})"}
 label () {printf '%18s' "$(sed -n $1'p' $bd|awk {'print "%{T2}"$4"%{T-}"'}) $(printf '%17s' "$(sed -n $1'p' $bd|awk {'print $5,$6,$7,$8'}|tail -c 17)") %{T4}$(sed -n $1'p' $bd|awk {'print "%{T3}"$3"%{T-}"'})"}
+#label () {printf '%18s' "$(awk {'print "%{T2}"$4"%{T-}"'} <<< $(sed -n $1'p' $bd)) $(printf '%17s' "$(tail -c 17 <<< $(awk {'print $5,$6,$7,$8'} <<< $(sed -n $1'p' $bd)))) %{T4}$(awk {'print "%{T3}"$3"%{T-}"'} <<< $(sed -n $1'p' $bd))}"
 tiled () {bspc node $(sed -n $1'p' $bd |awk {'print $2'}) -t tiled}
 floating () {bspc node $(sed -n $1'p' $bd |awk {'print $2'}) -t floating}
 sticky () {bspc node $(sed -n $1'p' $bd |awk {'print $2'}) --flag sticky=on}
@@ -21,7 +24,8 @@ i3floating () {i3-msg '[id='$(sed -n $1'p' $bd |awk {'print $2'})']' floating to
 #funções de serviços pro programa
 start () {
 while true; do
-  zsh $path_proj/taskbar.program.zsh
+  #zsh $path_proj/taskbar.program.zsh
+  $path_proj/taskbar.program.zsh
   sleep 0.5
 done
 }
@@ -37,4 +41,6 @@ pid_task=($(ps aux |grep -E '[p]rogram.zsh$|[t]askbar.zsh start$'|awk {'print $2
 kill $pid_task[@]
 }
 
-
+id () {
+cat -n /tmp/taskbar
+}
