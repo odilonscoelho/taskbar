@@ -44,13 +44,12 @@ codeoss=﬏
 yad=
 gimp2=
 xreader=
+epdfview=
 pcmanfm=
 qtwebflix=𥳐
 feh=
 gucharmap=
 default=
-#ícones dos workspaces, caso não queira usá-los, altere por numeros, nomes o o que desejar;
-#essa descrição aparecerá na frente do título da janela.
 w1=""
 w2=""
 w3=""

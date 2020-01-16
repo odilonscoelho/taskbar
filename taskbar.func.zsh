@@ -1,17 +1,21 @@
 #!/bin/zsh
 foco () 
 {
-	wmctrl -i -a "$(sed -n $1'p' <<< $(awk {'print $2'} $bd))"
+	wmctrl -i -a \
+	"$(awk -v linha=$1 'NR == linha {print $2}' /tmp/taskbar)"
 }
 
 close () 
 {
-	wmctrl -i -c "$(sed -n $1'p' <<< $(awk {'print $2'} $bd))"
+	wmctrl -i -c \
+	"$(awk -v linha=$1 'NR == linha {print $2}' /tmp/taskbar)"
 }
 
 fullscreen () 
 {
-	wmctrl -i -r "$(sed -n $1'p' $bd |awk {'print $2'})" -b toggle,fullscreen
+	wmctrl -i -r \
+	"$(awk -v linha=$1 'NR == linha {print $2}' /tmp/taskbar)" \
+	-b toggle,fullscreen
 }
 
 monitores () 
@@ -30,37 +34,24 @@ labelmin ()
 
 label () 
 {
-	printf '%18s' "\
-	$(awk {'print "%{T2}"$4"%{T-}"'} <<< $(sed -n $1'p' $bd)) \
-	$(printf '%-17s' "$(tail -c 17 <<< $(awk {'print $5,$6,$7,$8'} <<< $(sed -n $1'p' $bd)))") \
-	%{T4}$(awk {'print "%{T3}"$3"%{T-}"'} <<< $(sed -n $1'p' $bd))\
-	"
+	printf '%1s%18s%1s' \
+	"$(awk -v linha=$1 'NR == linha {print "%{T2}"$4"%{T-}"}' $bd)" \
+	"$(tail -c 18 <<< $(awk -v linha=$1 'NR == linha {print $5,$6,$7,$8}' $bd))" \
+	%{T4}"$(awk -v linha=$1 ' NR == linha {print "%{T3}"$3"%{T-}"}' $bd)"
 }
 
 tiled () 
 {
-	bspc node $(awk {'print $2'} <<< $(sed -n $1'p' $bd)) -t tiled
+	bspc node \
+	$(awk -v linha=$1 'NR == linha {print $2}' $bd) \
+	-t tiled
 }
 
 floating () 
 {
-	bspc node $(awk {'print $2'} <<< $(sed -n $1'p' $bd)) -t floating
-}
-
-sticky () 
-{
-	bspc node $(awk {'print $2'} <<< $(sed -n $1'p' $bd)) --flag sticky=on
-}
-
-stickyoff () 
-{
-	bspc node $(awk {'print $2'} <<< $(sed -n $1'p' $bd)) --flag sticky=off
-}
-
-xterm.sticky () 
-{
-	nohup xterm -title "Xterm Sticky ON" -geometry 100x1+0+2060 &>/dev/null &
-	sleep 1 && bspc node --flag sticky=on
+	bspc node \
+	$(awk -v linha=$1 'NR == linha {print $2}' $bd) \
+	-t floating
 }
 
 #i3
@@ -75,32 +66,7 @@ labeli3 ()
 
 i3floating () 
 {
-	i3-msg '[id='$(sed -n $1'p' $bd |awk {'print $2'})']' floating toggle
-}
-
-#funções de serviços pro programa
-start () 
-{
-while true; do
-  $path_proj/taskbar.program.zsh
-  sleep 0.5
-done
-}
-
-restart () 
-{
-	pid_task=($(ps aux |grep -E '[p]rogram.zsh$|[t]askbar.zsh start$'|awk {'print $2'}))
-	kill $pid_task[@]
-	start
-}
-
-stop () 
-{
-	pid_task=($(ps aux |grep -E '[p]rogram.zsh$|[t]askbar.zsh start$'|awk {'print $2'}))
-	kill $pid_task[@]
-}
-
-id () 
-{
-	cat -n /tmp/taskbar
+	i3-msg \
+	'[id='$(sed -n $1'p' $bd |awk {'print $2'})']' \
+	floating toggle
 }
