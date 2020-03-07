@@ -1,26 +1,21 @@
-#!/bin/zsh
+#!/usr/bin/zsh
 foco () 
 {
 	wmctrl -i -a \
-	"$(awk -v linha=$1 'NR == linha {print $2}' /tmp/taskbar)"
+	"$(awk -v linha=$1 'NR == linha {print $2}' $bd)"
 }
 
 close () 
 {
 	wmctrl -i -c \
-	"$(awk -v linha=$1 'NR == linha {print $2}' /tmp/taskbar)"
+	"$(awk -v linha=$1 'NR == linha {print $2}' $bd)"
 }
 
 fullscreen () 
 {
 	wmctrl -i -r \
-	"$(awk -v linha=$1 'NR == linha {print $2}' /tmp/taskbar)" \
+	"$(awk -v linha=$1 'NR == linha {print $2}' $bd)" \
 	-b toggle,fullscreen
-}
-
-monitores () 
-{
-	xrandr|grep -E "'[A-Z]'|connected "|grep -v "disconnect"|awk {'print $1'}|sed -n $1'p'
 }
 
 #BSPC
@@ -34,10 +29,23 @@ labelmin ()
 
 label () 
 {
-	printf '%1s%18s%1s' \
+	printf '%2s %-20s %2s' \
 	"$(awk -v linha=$1 'NR == linha {print "%{T2}"$4"%{T-}"}' $bd)" \
-	"$(tail -c 18 <<< $(awk -v linha=$1 'NR == linha {print $5,$6,$7,$8}' $bd))" \
+	"$(tail -c 20 <<< $(awk -v linha=$1 'NR == linha {print $6,$7,$8,$9}' $bd))" \
 	%{T4}"$(awk -v linha=$1 ' NR == linha {print "%{T3}"$3"%{T-}"}' $bd)"
+}
+
+labeltest ()
+{
+	[[ "$(wc -l < $bd)" -gt 1 ]] && \
+		printf '%-1s %-20s%1s' \
+		%{T2}${${(f)"$(<$bd)"}[$1][16]}%{T-} \
+		"$(tail -c 17 <<< ${${(f)"$(<$bd)"}[$1][18,60]})" \
+		%{T3}${${(f)"$(<$bd)"}[$1][14]}%{T-} ||\
+		printf '%-1s %-20s%1s' \
+		%{T2}${${(f)"$(<$bd)"}[@][16]}%{T-} \
+		"$(tail -c 17 <<< ${${(f)"$(<$bd)"}[@][18,60]})" \
+		%{T3}${${(f)"$(<$bd)"}[@][14]}%{T-}
 }
 
 tiled () 
@@ -70,3 +78,4 @@ i3floating ()
 	'[id='$(sed -n $1'p' $bd |awk {'print $2'})']' \
 	floating toggle
 }
+
