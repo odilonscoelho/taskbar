@@ -1,17 +1,17 @@
 #!/usr/bin/zsh
-foco () 
+foco ()
 {
 	wmctrl -i -a \
 	"$(awk -v linha=$1 'NR == linha {print $2}' $bd)"
 }
 
-close () 
+close ()
 {
 	wmctrl -i -c \
 	"$(awk -v linha=$1 'NR == linha {print $2}' $bd)"
 }
 
-fullscreen () 
+fullscreen ()
 {
 	wmctrl -i -r \
 	"$(awk -v linha=$1 'NR == linha {print $2}' $bd)" \
@@ -19,7 +19,7 @@ fullscreen ()
 }
 
 #BSPC
-labelmin () 
+labelmin ()
 {
 	printf '%4s' "\
 	$(awk {'print "%{T2}"$4"%{T-}"'} <<< $(sed -n $1'p' $bd)) \
@@ -27,11 +27,11 @@ labelmin ()
 	"
 }
 
-label () 
+label ()
 {
 	printf '%2s %-20s %2s' \
 	"$(awk -v linha=$1 'NR == linha {print "%{T2}"$4"%{T-}"}' $bd)" \
-	"$(tail -c 20 <<< $(awk -v linha=$1 'NR == linha {print $6,$7,$8,$9}' $bd))" \
+	"$(tail -c 20 <<< $(awk -v linha=$1 'NR == linha {print $6,$7,$8,$9,$10}' $bd))" \
 	%{T4}"$(awk -v linha=$1 ' NR == linha {print "%{T3}"$3"%{T-}"}' $bd)"
 }
 
@@ -48,14 +48,14 @@ labeltest ()
 		%{T3}${${(f)"$(<$bd)"}[@][14]}%{T-}
 }
 
-tiled () 
+tiled ()
 {
 	bspc node \
 	$(awk -v linha=$1 'NR == linha {print $2}' $bd) \
 	-t tiled
 }
 
-floating () 
+floating ()
 {
 	bspc node \
 	$(awk -v linha=$1 'NR == linha {print $2}' $bd) \
@@ -63,7 +63,7 @@ floating ()
 }
 
 #i3
-labeli3 () 
+labeli3 ()
 {
 	printf '%18s' "\
 	$(sed -n $1'p' $bd|awk {'print "%{T2}"$3"%{T-}"'}) \
@@ -72,10 +72,9 @@ labeli3 ()
 	"
 }
 
-i3floating () 
+i3floating ()
 {
 	i3-msg \
 	'[id='$(sed -n $1'p' $bd |awk {'print $2'})']' \
 	floating toggle
 }
-
