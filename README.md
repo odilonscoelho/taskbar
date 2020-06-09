@@ -127,4 +127,4 @@ Ao atribuir novos ícones, pare e reinicie o backend.
 
 
 ###Imagem
-![Ilustração] (/home/losaoall/hdbkp/projetos/shell/taskbar/print.jpg)<br/>
+![Ilustração] (https://github.com/odilonscoelho/taskbar/blob/cbf8c97cf510eaf29241466c6fab6d710b1967c2/print.jpg)
