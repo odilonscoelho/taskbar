@@ -126,4 +126,4 @@ Ao atribuir novos ícones, pare e reinicie o backend.
 > **taskbar.zsh start**
 
 * Imagem
-![Ilustração] (https://github.com/odilonscoelho/taskbar/blob/master/print.jpg)<br/>
+> ![Ilustração] (https://github.com/odilonscoelho/taskbar/blob/master/print.jpg)<br/>
