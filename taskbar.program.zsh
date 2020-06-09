@@ -28,7 +28,6 @@ if [[ $contador -gt 1 ]]; then
 			indice=$(( ${${(f)scopenew}[$i][13]} + 1 ))
 			eval workspace='$'w"$indice"
 			title=${${(f)scopenew}[$i][23,-1]}
-			# program=${$(xwinfo -i $id)//-/}
       validar.program
 			eval icon='$'$program
 			[[ -z $icon ]] && eval icon=$default
@@ -51,8 +50,7 @@ elif [[ $contador -eq 1 ]]; then
 			indice=$(( ${scopenew[13]} + 1 ))
 			eval workspace='$'w"$indice"
 			title=${scopenew[23,-1]}
-			# program=${$(xwinfo -i $id)//-/}
-			validar.program
+      validar.program
 			eval icon='$'$program
 			[[ -z $icon ]] && eval icon=$default
 			<<< "$indice $id $workspace $icon $program $title" >| $bd

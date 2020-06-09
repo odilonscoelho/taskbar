@@ -11,7 +11,7 @@ taskbar - labels de janelas para polybar - bspwm/i3wm
 O conjunto de scripts fornecem uma maneira de desenhar na polybar via módulos IPC (polybar-msg) as labels das janelas ativas.
 
 * **taskbar.zsh**
-	* taskbar.zsh é apenas um direcionador, que carrega as funções disponíveis em taskbar.func.zsh e as executa. 
+	* taskbar.zsh é apenas um direcionador, que carrega as funções disponíveis em taskbar.func.zsh e as executa.
 	* Quando chamado com a função start:
 		> **taskbar.zsh start**
 	* inicia o backend *taskbar.program.zsh*, responsável por gerar as informações no arquivo */tmp/taskbar* (títulos, workspace, programa e id de cada janela ativa), que serão usados para desenhar as labels nos módulos da polybar e automatizar funções com mouse (módulo polybar) ou shell a partir dos ids disponíveis.
@@ -37,7 +37,7 @@ O conjunto de scripts fornecem uma maneira de desenhar na polybar via módulos I
 3. crie um link ou copie **taskbar.zsh** para o seu path.
 
 4. crie os módulos da polybar de acordo com sua twm, você pode adicionar quantos módulos quiser, particularmente acho 20 um número suficiente em uma barra dedicada só para os módulos da taskbar. ;) :
-	
+
 	* bspwm
 	 ```
 	 [module/x1]
@@ -54,7 +54,7 @@ O conjunto de scripts fornecem uma maneira de desenhar na polybar via módulos I
 	 scroll-up = taskbar.zsh tiled 1
 	 scroll-down = taskbar.zsh floating 1
 	```
-	``` 
+	```
 	 [module/x2]
 	 type = custom/ipc
 	 hook-0 = echo
@@ -116,7 +116,7 @@ O conjunto de scripts fornecem uma maneira de desenhar na polybar via módulos I
 
 
 ## Funções
-	
+
 Ao atribuir novos ícones, pare e reinicie o backend.
 
 * Stop
@@ -124,3 +124,7 @@ Ao atribuir novos ícones, pare e reinicie o backend.
 
 * Start
 > **taskbar.zsh start**
+
+
+##Imagem
+![<Ilustração>] (<print.jpg>)
