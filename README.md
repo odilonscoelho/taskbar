@@ -30,7 +30,7 @@ It is a set of scripts that provide the polybar via IPC modules (polybar-msg) wi
 
 * **taskbar.icons.zsh**
 	* É onde você pode atribuir os icones (fontes com glifos) que quer utilizar para os programas, há comentários no script sobre como proceder com o nome das aplicações ao atribuir um ícone a um novo programa, há possibilidade de atribuir um ícone **default** que será usado para programas ainda não atribuídos.
-	* starts the * taskbar.program.zsh * backend, responsible for generating the information in the file * / tmp / taskbar * (titles, workspace, program and id of each active window), which will be used to design the labels in the polybar and automate functions with mouse (polybar module) or shell from the available ids.
+	* This is where you can assign the icons (fonts with glyphs) that you want to use for the programs, there are comments in the script on how to proceed with the name of the applications when assigning an icon to a new program, there is a possibility to assign an icon ** default * * that will be used for programs not yet assigned.
 
 * **taskbar.func.zsh**
 	* script que contém as funções de chamadas front-end do programa, literalmente as funções necessárias para desenhar os módulos.
