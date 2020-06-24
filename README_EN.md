@@ -104,11 +104,9 @@ It is a set of scripts that provide the polybar via IPC modules (polybar-msg) wi
 	```
 
 5. Automatic start
-	* bspwm - adicione ao bspwmrc:
 	* bspwm - add to bspwmrc:
 	> **taskbar.zsh start**
 
-	* i3wm - adicione ao seu config:
 	* i3wm - add to config:
 	> **exec_always --no-startup-id taskbar.zsh start**
 
