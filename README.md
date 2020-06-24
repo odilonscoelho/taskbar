@@ -1,6 +1,6 @@
 
 ### On english:
-![Ilustração](https://github.com/odilonscoelho/taskbar/blob/master/README_EN.md)<br/>
+![README_EN](https://github.com/odilonscoelho/taskbar/blob/master/README_EN.md)<br/>
 
 # taskbar
 taskbar - labels de janelas para polybar - bspwm/i3wm
