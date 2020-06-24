@@ -13,9 +13,9 @@ taskbar - labels de janelas para polybar - bspwm/i3wm
 * wmctrl - utility that provides information about active windows.
 
 ## o que é o taskbar.zsh? como funciona?
-	É um conjunto de scripts que fornecem à polybar via módulos IPC (polybar-msg) as labels das janelas abertas no bspwm ou no i3wm.
+É um conjunto de scripts que fornecem à polybar via módulos IPC (polybar-msg) as labels das janelas abertas no bspwm ou no i3wm.
 ## what is taskbar.zsh? how it works?
-	It is a set of scripts that provide the polybar via IPC modules (polybar-msg) with the labels of the windows opened in bspwm or i3wm.
+It is a set of scripts that provide the polybar via IPC modules (polybar-msg) with the labels of the windows opened in bspwm or i3wm.
 
 * **taskbar.zsh**
 	* taskbar.zsh é apenas um direcionador, que carrega as funções disponíveis em taskbar.func.zsh e as executa
