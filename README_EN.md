@@ -30,7 +30,7 @@ It is a set of scripts that provide the polybar via IPC modules (polybar-msg) wi
 2. update the **$ path_proj** variable in **taskbar.zsh** with the path from where you cloned the repository:
 	> declare -x path_proj=/path
 
-3. create a link or copy ** taskbar.zsh ** to your path.
+3. create a link or copy **taskbar.zsh** to your path.
 
 4. create the polybar modules according to your twm, you can add as many modules as you want, particularly I find 20 enough in a dedicated bar just for the taskbar modules :
 
