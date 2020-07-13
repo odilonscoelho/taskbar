@@ -30,9 +30,9 @@ labelmin ()
 label ()
 {
 	printf '%2s %-20s %2s' \
-	"$(awk -v linha=$1 'NR == linha {print "%{T2}"$4"%{T-}"}' $bd)" \
+	"$(awk -v linha=$1 'NR == linha {print $4}' $bd)" \
 	"$(tail -c 20 <<< $(awk -v linha=$1 'NR == linha {print $6,$7,$8,$9,$10}' $bd))" \
-	%{T4}"$(awk -v linha=$1 ' NR == linha {print "%{T3}"$3"%{T-}"}' $bd)"
+	"$(awk -v linha=$1 ' NR == linha {print $3}' $bd)"
 }
 
 labeltest ()
