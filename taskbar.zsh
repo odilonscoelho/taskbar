@@ -8,7 +8,7 @@ start ()
     $(execucaotaskbar)
     sleep 0.25
   done
-  taskbar restart
+  start
 }
 
 execucaotaskbar ()
@@ -16,11 +16,6 @@ execucaotaskbar ()
   val
   execucaotaskbar
 }
-
-# execucao.workspace ()t
-# {
-#
-# }
 
 stop ()
 {
