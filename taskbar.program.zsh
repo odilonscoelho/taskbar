@@ -23,9 +23,11 @@ main ()
 
 	if [[ $scopeold != $scopenew ]]; then
 		declare -x contador=$(wc -l <<< $scopenew)
+		declare -x controller="scope"
 		analysis.scope
 		main
 	else
+		declare -x controller="base"
 		analysis.base
 		main
 	fi
@@ -33,8 +35,6 @@ main ()
 
 analysis.scope ()
 {
-	# Vai pegar qualquer alteração em wmctrl -l, apenas alterações de focus em que não houve nenhuma alteração,
-	# de títulos ou workspaces, além obviamente da abertura e fechamento de janelas.
 
 	unset labelsnew
 	if [[ $contador -gt 1 ]]; then
@@ -60,9 +60,9 @@ analysis.scope ()
 	elif [[ $contador -eq 1 ]]; then
 
 		if [[ -n $scopenew && "${$(<$bd)[6,-1]}" == ${scopenew[15,-1]} && "$(( ${scopenew[13]} + 1 ))" == "${$(<$bd)[1]}" ]]; then
-			export contador=0
+			declare -x contador=0
 		elif [[ -z $scopenew ]]; then
-			export contador=0
+			declare -x contador=0
 		else
 			id=${scopenew[1,10]}
 			indice=$(( ${scopenew[13]} + 1 ))
@@ -73,76 +73,17 @@ analysis.scope ()
 			[[ -z $icon ]] && eval icon=$default
 			<<< "$indice $id $workspace $icon $program $title" >| $bd
 		fi
-		
+
 	else
 		declare -x contador=0
 	fi
 	modules
-}
 
-analysis.base ()
-{
-	# essa função não deve passar por modules
-	# Caso não houve alteração em títulos, nem em quantidade de janelas abertas,
-	# mas a base foi alterada o window_focused ou workspace_focused precisa ser atualizados.
-
-	if [[ $baseold != $basenew ]]; then
-		
-		declare -x workspace_focused=$(( ${${(f)basenew}[8]//\_NET\_CURRENT\_DESKTOP\(CARDINAL\) \= /} + 1 ))
-		
-		if [[ $workspace_focused_old != $workspace_focused ]]; then
-			eval workspace='$'W"$workspace_focused"
-			<<< $workspace >| $bk
-			polybar-msg hook ws 1 
-		fi
-
-		declare -x window_focused="${${${(f)basenew}[1]//\_NET\_ACTIVE\_WINDOW\(WINDOW\)\:\ window\ id\ \# /}//0x/0x0}"
-		
-		if [[ $(wc -c <<< $window_focused) -eq 10 ]]; then
-			declare -x window_focused="${${window_focused}//0x0/0x00}"
-		fi
-		
-		if [[ $window_focused_old != $window_focused ]]; then
-			declare -x window_focused_old=$window_focused
-		 	polybar-msg hook x"$xhook" 2 
-			declare -x xhook=$(grep --line-number "$window_focused" $bd| cut -d ':' -f 1)
-			polybar-msg hook x"$xhook" 3 
-		fi
-
-		declare -x workspace_focused_old=$workspace_focused
-		declare -x baseold=$basenew
-	fi
-}
-
-analysis.focused ()
-{
-	declare -x workspace_focused=$(( ${${(f)basenew}[8]//\_NET\_CURRENT\_DESKTOP\(CARDINAL\) \= /} + 1 ))
-	
-	if [[ $workspace_focused_old != $workspace_focused ]]; then
-		eval workspace='$'W"$workspace_focused"
-		<<< $workspace >| $bk
-		polybar-msg hook ws 1 #&> /dev/null
-	fi
-
-	declare -x window_focused="${${${(f)basenew}[1]//\_NET\_ACTIVE\_WINDOW\(WINDOW\)\:\ window\ id\ \# /}//0x/0x0}"
-	
-	if [[ $(wc -c <<< $window_focused) -eq 10 ]]; then
-		declare -x window_focused="${${window_focused}//0x0/0x00}"
-	fi
-	
-	if [[ $window_focused_old != $window_focused ]]; then
-		declare -x window_focused_old=$window_focused
-		declare -x xhook=$(grep --line-number "$window_focused" $bd| cut -d ':' -f 1)
-	elif [[ $window_focused_old == $window_focused && $workspace_focused_old != $workspace_focused ]]; then
-		declare -x xhook=$(grep --line-number "$window_focused" $bd| cut -d ':' -f 1)
-	fi
-
-	declare -x workspace_focused_old=$workspace_focused
-	declare -x baseold=$basenew
 }
 
 analysis.exceptions ()
 {
+
 	case "$title" in
 		*"the home for *NIX"* ) program="reddit";;
 		*"reddit:"* ) program="reddit";;
@@ -160,55 +101,139 @@ analysis.exceptions ()
 		WiFi* ) program="WiFiAudio";;
 		* ) program=${$(xwinfo -i $id)//-/};;
 	esac
+
+}
+
+analysis.base ()
+{
+
+	if [[ $baseold != $basenew || $controller == "scope" ]]; then
+		
+		declare -x workspace_focused=$(( ${${(f)basenew}[8]//\_NET\_CURRENT\_DESKTOP\(CARDINAL\) \= /} + 1 ))
+		
+		if [[ $workspace_focused_old != $workspace_focused ]]; then
+			declare -x statusWorkspace="att"
+			eval workspace='$'W"$workspace_focused"
+			<<< $workspace >| $bk
+			polybar-msg hook ws 1 
+		else
+			declare -x statusWorkspace="default"
+		fi
+
+		declare -x window_focused="${${(f)basenew}[1]//\_NET\_ACTIVE\_WINDOW\(WINDOW\)\:\ window\ id\ \# /}"
+		
+		case "$(wc -c <<< $window_focused)" in
+			9 ) declare -x window_focused="${${window_focused}//0x/0x00}";;
+			10 ) declare -x window_focused="${${window_focused}//0x/0x0}";;
+		esac
+
+		if [[ $window_focused_old != $window_focused ]]; then
+		
+			if [[ $controller == "base" ]]; then
+		 		polybar-msg hook x"$xhook" 2
+		 		sleep 0.02
+				declare -x xhook=$(grep --line-number "$window_focused" $bd| cut -d ':' -f 1)
+				declare -x xhookWorkspace=$(grep "$window_focused" $bd| cut -d ' ' -f 1)
+				if [[ $xhookWorkspace == $workspace_focused ]]; then
+					polybar-msg hook x"$xhook" 3 
+					sleep 0.02
+				else
+					polybar-msg hook x"$xhook" 2 
+					sleep 0.02
+				fi
+			else
+				declare -x xhook=$(grep --line-number "$window_focused" $bd| cut -d ':' -f 1)
+				declare -x xhookWorkspace=$(grep "$window_focused" $bd| cut -d ' ' -f 1)
+			fi
+
+		else
+		 		
+		 	if [[ $controller == "base" ]]; then
+				
+				declare -x xhook=$(grep --line-number "$window_focused" $bd| cut -d ':' -f 1)
+		 		
+		 		if [[ $xhookWorkspace -eq $workspace_focused ]]; then
+			 		polybar-msg hook x"$xhook" 3
+				else
+			 		polybar-msg hook x"$xhook" 2
+		 		fi
+		 	elif [[ $controller == "scope" ]]; then
+				declare -x xhook=$(grep --line-number "$window_focused" $bd| cut -d ':' -f 1)
+		 	fi
+
+		fi
+
+		declare -x window_focused_old=$window_focused
+		declare -x workspace_focused_old=$workspace_focused
+		declare -x baseold=$basenew
+
+	fi
+
 }
 
 modules ()
 {
 
-	analysis.focused
+	analysis.base
 
-	if [[ $contador -lt $contadorold ]]; then
-		
-		for (( i=1; i <= $xhook ; i++ ))
-		{
-	 		polybar-msg hook x"$i" 2 
-		 	sleep 0.02
-		}
+	if [[ $contador -gt 0 ]]; then
 
-		polybar-msg hook x"$xhook" 3 
-		sleep 0.02
+		if [[ $contador -lt $contadorold ]]; then
+			
+			for (( i=1; i <= $xhook ; i++ ))
+			{
+		 		polybar-msg hook x"$i" 2 
+			 	sleep 0.02
+			}
 
-		for (( i=$(( $xhook + 1 )); i <= $contador ; i++ ))
-		{
-	 		polybar-msg hook x"$i" 2 
-		 	sleep 0.02
-		}
-		
-		for (( i=$(( $contador + 1 )); i <= $contadorold; i++ ))
+			if [[ $xhookWorkspace == $workspace_focused ]]; then
+				polybar-msg hook x"$xhook" 3 
+				sleep 0.02
+			else
+				polybar-msg hook x"$xhook" 2 
+				sleep 0.02
+			fi
+
+			for (( i=$(( $xhook + 1 )); i <= $contador ; i++ ))
+			{
+		 		polybar-msg hook x"$i" 2 
+			 	sleep 0.02
+			}
+			
+			for (( i=$(( $contador + 1 )); i <= $contadorold; i++ ))
+			{
+			 	polybar-msg hook x"$i" 1 
+			 	sleep 0.02
+			}
+
+		else
+			
+			for (( i=1; i <= $xhook ; i++ ))
+			{
+		 		polybar-msg hook x"$i" 2 
+			 	sleep 0.02
+			}
+			
+			polybar-msg hook x"$xhook" 3 
+			sleep 0.02
+
+			for (( i=$(( $xhook + 1 )); i <= $contador ; i++ ))
+			{
+		 		polybar-msg hook x"$i" 2
+			 	sleep 0.02
+			}
+
+		fi
+	else
+
+		for (( i=1; i <= $contadorold; i++ ))
 		{
 		 	polybar-msg hook x"$i" 1 
 		 	sleep 0.02
 		}
 
-	else
-
-		for (( i=1; i <= $xhook ; i++ ))
-		{
-	 		polybar-msg hook x"$i" 2 
-		 	sleep 0.02
-		}
-		
-		polybar-msg hook x"$xhook" 3 
-		sleep 0.02
-
-		for (( i=$(( $xhook + 1 )); i <= $contador ; i++ ))
-		{
-	 		polybar-msg hook x"$i" 2
-		 	sleep 0.02
-		}
-
 	fi
-
+	
 	declare -x contadorold=$contador
 	declare -x scopeold=$scopenew
 
