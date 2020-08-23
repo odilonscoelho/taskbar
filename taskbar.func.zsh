@@ -1,4 +1,5 @@
 #!/usr/bin/zsh
+
 foco ()
 {
 	wmctrl -i -a \
@@ -23,29 +24,27 @@ labelmin ()
 {
 	printf '%4s' "\
 	$(awk {'print "%{T2}"$4"%{T-}"'} <<< $(sed -n $1'p' $bd)) \
-	%{T4}$(awk {'print "%{T3}"$3"%{T-}"'} <<< $(sed -n $1'p' $bd))\
+	%{T4}$(awk {'print "%{T3}"$3"%{T-}"'} <<< $(sed -n $1'p' $bd)) \
 	"
 }
 
-label ()
+labelfocused ()
 {
-	printf '%2s %-20s %2s' \
-	"$(awk -v linha=$1 'NR == linha {print $4}' $bd)" \
-	"$(tail -c 20 <<< $(awk -v linha=$1 'NR == linha {print $6,$7,$8,$9,$10}' $bd))" \
-	"$(awk -v linha=$1 ' NR == linha {print $3}' $bd)"
+	color=$color16
+	# font=0
+	printf '%1s %2s %-38s %2s %1s' \
+	"%{R}" "$(awk -v linha=$1 'NR == linha {print $4}' $bd)" \
+	"%{F$color}$(tail -c 20 <<< $(awk -v linha=$1 'NR == linha {print $6,$7,$8,$9,$10,$11}' $bd))%{F-}" \
+	"$(awk -v linha=$1 ' NR == linha {print $3}' $bd)" "%{R-}"
 }
 
-labeltest ()
+
+label ()
 {
-	[[ "$(wc -l < $bd)" -gt 1 ]] && \
-		printf '%-1s %-20s%1s' \
-		%{T2}${${(f)"$(<$bd)"}[$1][16]}%{T-} \
-		"$(tail -c 17 <<< ${${(f)"$(<$bd)"}[$1][18,60]})" \
-		%{T3}${${(f)"$(<$bd)"}[$1][14]}%{T-} ||\
-		printf '%-1s %-20s%1s' \
-		%{T2}${${(f)"$(<$bd)"}[@][16]}%{T-} \
-		"$(tail -c 17 <<< ${${(f)"$(<$bd)"}[@][18,60]})" \
-		%{T3}${${(f)"$(<$bd)"}[@][14]}%{T-}
+	printf '%2s %-22s %2s' \
+	" $(awk -v linha=$1 'NR == linha {print $4}' $bd)" \
+	"$(tail -c 20 <<< $(awk -v linha=$1 'NR == linha {print $6,$7,$8,$9,$10,$11}' $bd))" \
+	"$(awk -v linha=$1 ' NR == linha {print $3}' $bd) "
 }
 
 tiled ()
@@ -78,3 +77,4 @@ i3floating ()
 	'[id='$(sed -n $1'p' $bd |awk {'print $2'})']' \
 	floating toggle
 }
+

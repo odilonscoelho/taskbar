@@ -3,11 +3,19 @@
 #icons => atribuir o nome dos programas sem hífen '-' , exemplo telegram-desktop fica telegramdesktop
 #para pesquisar como um programa se chama ao adicioná-lo, use o seu id (disponivel em /tmp/taskbar) para pesquisar com
 #xwinfo -i <id>, isso retornará a classe instancia da janela que será usado como o nome do programa.
+
+export titlefontfocused="8"
+export colorfontfocused=$color16
+
 fontprogramicon=2
-coloriconprg=$color3
+coloriconprg=$color2
 fontworkspaceicon=3
 coloriconwkp=$color2
 
+reddit="%{F$coloriconprg}%{T$fontprogramicon}%{F-}%{T-}"
+twitter="%{F$coloriconprg}%{T$fontprogramicon}%{F-}%{T-}"
+github="%{F$coloriconprg}%{T$fontprogramicon}%{F-}%{T-}"
+linkedin="%{F$coloriconprg}%{T$fontprogramicon}%{F-}%{T-}"
 pulsemixer="%{F$coloriconprg}%{T$fontprogramicon}蓼%{F-}%{T-}"
 WiFiAudio="%{F$coloriconprg}%{T$fontprogramicon}%{F-}%{T-}"
 htop="%{F$coloriconprg}%{T$fontprogramicon}%{F-}%{T-}"
@@ -69,7 +77,7 @@ Alacritty="%{F$coloriconprg}%{T$fontprogramicon}%{F-}%{T-}"
 Mail="%{F$coloriconprg}%{T$fontprogramicon}%{F-}%{T-}"
 DBeaver="%{F$coloriconprg}%{T$fontprogramicon}%{F-}%{T-}"
 default="%{F$coloriconprg}%{T$fontprogramicon}%{F-}%{T-}"
-#ícones que serão usados para representar os workspaces;
+# ícones que serão usados para representar os workspaces;
 w1="%{F$coloriconwkp}%{T$fontworkspaceicon}%{F-}%{T-}"
 w2="%{F$coloriconwkp}%{T$fontworkspaceicon}%{F-}%{T-}"
 w3="%{F$coloriconwkp}%{T$fontworkspaceicon}%{F-}%{T-}"
@@ -80,3 +88,14 @@ w7="%{F$coloriconwkp}%{T$fontworkspaceicon}%{F-}%{T-}"
 w8="%{F$coloriconwkp}%{T$fontworkspaceicon}%{F-}%{T-}"
 w9="%{F$coloriconwkp}%{T$fontworkspaceicon}%{F-}%{T-}"
 w10="%{F$coloriconwkp}%{T$fontworkspaceicon}%{F-}%{T-}"
+# ícones que serão usados para representar os workspaces em módulo separado;
+W0=
+W1=
+W2=
+W3=
+W4=
+W5=
+W6=
+W7=
+W8=
+W9=
