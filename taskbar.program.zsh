@@ -99,7 +99,7 @@ analysis.base ()
 		declare -x window_focused="${${${(f)basenew}[1]//\_NET\_ACTIVE\_WINDOW\(WINDOW\)\:\ window\ id\ \# /}//0x/0x0}"
 		
 		if [[ $(wc -c <<< $window_focused) -eq 10 ]]; then
-			declare -x window_focused="$(sed 's/0x0/0x00/g' <<< $window_focused)"
+			declare -x window_focused="${${window_focused}//0x0/0x00}"
 		fi
 		
 		if [[ $window_focused_old != $window_focused ]]; then
