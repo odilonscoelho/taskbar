@@ -32,16 +32,16 @@ labelfocused ()
 {
 	color=$color16
 	# font=0
-	printf '%1s %2s %-38s %2s %1s' \
-	"%{R}" "$(awk -v linha=$1 'NR == linha {print $4}' $bd)" \
+	printf '%-7s %-36s %7s' \
+	"%{R} $(awk -v linha=$1 'NR == linha {print $4}' $bd)" \
 	"%{F$color}$(tail -c 20 <<< $(awk -v linha=$1 'NR == linha {print $6,$7,$8,$9,$10,$11}' $bd))%{F-}" \
-	"$(awk -v linha=$1 ' NR == linha {print $3}' $bd)" "%{R-}"
+	"$(awk -v linha=$1 ' NR == linha {print $3}' $bd) %{R-}"
 }
 
 
 label ()
 {
-	printf '%2s %-22s %2s' \
+	printf '%-2s %-20s %2s' \
 	" $(awk -v linha=$1 'NR == linha {print $4}' $bd)" \
 	"$(tail -c 20 <<< $(awk -v linha=$1 'NR == linha {print $6,$7,$8,$9,$10,$11}' $bd))" \
 	"$(awk -v linha=$1 ' NR == linha {print $3}' $bd) "

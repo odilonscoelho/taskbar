@@ -1,7 +1,6 @@
 #!/bin/zsh
 start ()
 {
-  # . $path_proj/taskbar.program.zsh
   . $path_proj/taskbar.program.zsh
   . $path_proj/taskbar.icons.zsh
   init
@@ -24,12 +23,19 @@ interval ()
 {
   sleep 0.2
 }
-declare -x path_proj=~/path/taskbar
+
+interval.polybar ()
+{
+  sleep 0.02
+}
+
+declare -x path_proj=~/hdbkp/taskbar.test
 declare -x bd=/tmp/taskbar
 declare -x bw="/tmp/taskbar.focused"
 declare -x bk="/tmp/taskbar.workspace"
 declare -x bs="/tmp/taskbar.scopenew"
 declare -x bf="/tmp/taskbar.workfocus"
+
 [[ -z $@ ]] && echo "usage : taskbar start|stop" || \
   case $1 in
     start ) { wq notificatime 5000 "taskbar start" & }; { start &> /dev/null & } || <<< "falha ao iniciar" ;;
