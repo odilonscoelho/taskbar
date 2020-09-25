@@ -7,9 +7,13 @@
 </div>
 
 ## Dependências
-<img src="https://img.shields.io/static/v1?label=ZSH&message=Nao precisa ser seu shell padrao&color=green"/>
+<!-- <img src="https://img.shields.io/static/v1?label=ZSH&message=Nao precisa ser seu shell padrao&color=green"/>
 <img src="https://img.shields.io/static/v1?label=wmctrl&message=Utilitario para capturar informacoes do xorg&color=green"/>
-<img src="https://img.shields.io/static/v1?label=xwinfo&message=Utilitario para capturar informacoes do a cerca das janelas&color=green&?style=for-the-badge"/>
+<img src="https://img.shields.io/static/v1?label=xwinfo&message=Utilitario para capturar informacoes do a cerca das janelas&color=green&?style=for-the-badge"/> -->
+* ZSH
+* xwinfo
+* wmctrl
+
 
 
 ## o que é o taskbar? como funciona?
