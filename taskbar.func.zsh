@@ -1,4 +1,4 @@
-#!/usr/bin/zsh
+#!/bin/zsh
 
 foco ()
 {
@@ -19,7 +19,7 @@ fullscreen ()
 	-b toggle,fullscreen
 }
 
-#BSPC
+# bspwm
 labelmin ()
 {
 	printf '%4s' "\
@@ -30,21 +30,21 @@ labelmin ()
 
 labelfocused ()
 {
-	color=$color16
-	# font=0
-	printf '%-7s %-36s %7s' \
-	"%{R} $(awk -v linha=$1 'NR == linha {print $4}' $bd)" \
-	"%{F$color}$(tail -c 20 <<< $(awk -v linha=$1 'NR == linha {print $6,$7,$8,$9,$10,$11}' $bd))%{F-}" \
-	"$(awk -v linha=$1 ' NR == linha {print $3}' $bd) %{R-}"
+	labelSize=$(($sizeLabel+16))
+	printf '%-30s %-'$labelSize's %16s' \
+	"%{B$colorBackgroundFocused}%{F$colorIconProgramFocused}%{T$fontProgram} $(awk -v linha=$1 'NR == linha {print $4}' $bd)" \
+	"%{F$colorForegroundFocused}%{T$fontLabelFocused}$(tail -c $sizeLabel <<< $(awk -v linha=$1 'NR == linha {print $6,$7,$8,$9,$10,$11}' $bd))" \
+	"%{F$colorIconWorkspaceFocused}%{T$fontWorkspace}$(awk -v linha=$1 ' NR == linha {print $3}' $bd) %{F- B-}"
 }
 
 
 label ()
 {
-	printf '%-2s %-20s %2s' \
-	" $(awk -v linha=$1 'NR == linha {print $4}' $bd)" \
-	"$(tail -c 20 <<< $(awk -v linha=$1 'NR == linha {print $6,$7,$8,$9,$10,$11}' $bd))" \
-	"$(awk -v linha=$1 ' NR == linha {print $3}' $bd) "
+	labelSize=$(($sizeLabel+16))
+	printf '%-30s %-'$labelSize's %16s' \
+	"%{B$colorBackgroundUnFocused}%{F$colorIconProgramUnFocused}%{T$fontProgram} $(awk -v linha=$1 'NR == linha {print $4}' $bd)" \
+	"%{F$colorForegroundUnFocused}%{T$fontLabelUnFocused}$(tail -c $sizeLabel <<< $(awk -v linha=$1 'NR == linha {print $6,$7,$8,$9,$10,$11}' $bd))" \
+	"%{F$colorIconWorkspaceUnFocused}%{T$fontWorkspace}$(awk -v linha=$1 ' NR == linha {print $3}' $bd) "
 }
 
 tiled ()
@@ -61,15 +61,25 @@ floating ()
 	-t floating
 }
 
-#i3
+# i3wm
 labeli3 ()
 {
-	printf '%18s' "\
-	$(sed -n $1'p' $bd|awk {'print "%{T2}"$3"%{T-}"'}) \
-	$(printf '%17s' "$(sed -n $1'p' $bd|awk {'print $4,$5,$6,$7'}|tail -c 17)") \
-	$(printf '%-1s' "%{T1}%{T-}")\
-	"
+	labelSize=$(($sizeLabel+16))
+	printf '%-30s %-'$labelSize's %16s' \
+	"%{B$colorBackgroundUnFocused}%{F$colorIconProgramUnFocused}%{T$fontProgram} $(awk -v linha=$1 'NR == linha {print $4}' $bd)" \
+	"%{F$colorForegroundUnFocused}%{T$fontLabelUnFocused}$(tail -c $sizeLabel <<< $(awk -v linha=$1 'NR == linha {print $6,$7,$8,$9,$10,$11}' $bd))" \
+	"%{F$colorIconWorkspaceUnFocused}%{T$fontWorkspace}$(awk -v linha=$1 ' NR == linha {print $3}' $bd) "
 }
+
+labeli3focused ()
+{
+	labelSize=$(($sizeLabel+16))
+	printf '%-30s %-'$labelSize's %16s' \
+	"%{B$colorBackgroundFocused}%{F$colorIconProgramFocused}%{T$fontProgram} $(awk -v linha=$1 'NR == linha {print $4}' $bd)" \
+	"%{F$colorForegroundFocused}%{T$fontLabelFocused}$(tail -c $sizeLabel <<< $(awk -v linha=$1 'NR == linha {print $6,$7,$8,$9,$10,$11}' $bd))" \
+	"%{F$colorIconWorkspaceFocused}%{T$fontWorkspace}$(awk -v linha=$1 ' NR == linha {print $3}' $bd) %{F- B-}"
+}
+
 
 i3floating ()
 {
@@ -78,3 +88,9 @@ i3floating ()
 	floating toggle
 }
 
+# WS Workspaces
+
+labelws ()
+{
+	</tmp/taskbar.workspace
+}

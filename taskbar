@@ -1,0 +1,52 @@
+#!/bin/zsh
+
+# Importa configurações
+. taskbar.conf
+
+start ()
+{
+  . taskbar.program.zsh
+  init
+  while true; do
+    `main`
+    interval
+  done
+  interval
+  start
+}
+
+stop ()
+{
+  pid_task=($(ps aux |grep -E '[t]askbar.zsh start|[t]askbar start'|awk {'print $2'}))
+  kill $pid_task[@]
+}
+
+id ()
+{
+  awk '{print NR,$4,$5,"\t",$2}' $bd
+}
+
+interval ()
+{
+  sleep $intervalAlters
+}
+
+interval.polybar ()
+{
+  sleep $intervalPolybar
+}
+
+configure ()
+{
+  echo "# path para taskbar\nPATH=\$PATH:$PWD" >> $HOME/.zshrc
+}
+
+[[ -z $@ ]] && echo "usage : taskbar start|stop" || \
+  case $1 in
+    start ) { wq ntf 5000 "taskbar start" amarok_scripts & }; { start &> /dev/null & } || <<< "falha ao iniciar" ;;
+    stop ) { wq ntf 5000 "taskbar stop" amarok_scripts & }; { stop &> /dev/null & } || <<< "taskbar não está em execução" ;;
+    restart ) nohup $(sleep 2 && taskbar start) > /dev/null & { stop &> /dev/null & };;
+    id ) id;;
+    configure ) $@;;
+    * ) . taskbar.func.zsh; $@;;
+  esac

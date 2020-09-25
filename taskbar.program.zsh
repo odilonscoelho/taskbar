@@ -9,38 +9,38 @@ init ()
 	workspaceFocusedOld=""
 	windowFocusedOld=""
 	xhookOld=""
+	scopeOldPosition=""
 }
 
 base ()
 {
-  	{ wmctrl -l >| $bs } #|xargs
-  	{ xprop -root >| $bf } #|xargs
-	baseNew=$(< $bf)
+  	wmctrl -l >| $bs
+  	xprop -root >| $bf
 	scopeNew=$(< $bs)
+	baseNew=$(< $bf)
 }
 
 main ()
 {
-	interval
-	base
-	if [[ $scopeOld != $scopeNew ]]; then
-		contador=$(wc -l <<< $scopeNew)
-		controller="scope"
-		analysis.scope
-		analysis.base
-		modules
-		main
-	else
-		controller="base"
-		analysis.base
-		main
-	fi
+	while true; do
+		interval
+		base
+		if [[ $scopeOld != $scopeNew ]]; then
+			contador=$(wc -l <<< "$scopeNew")
+			controller="scope"
+			analysis.scope
+			analysis.base
+			modules
+		else
+			controller="base"
+			analysis.base
+		fi
+	done
 }
 
 analysis.scope ()
 {
 	unset labelsnew
-	unset alters
 	if [[ $contador -gt 1 ]]; then
 		for (( i = 1; i <= $contador; i++ ))
 		{
@@ -53,7 +53,6 @@ analysis.scope ()
 				eval icon='$'$program
 				[[ -z $icon ]] && eval icon=$default
 				labelsnew[$i]="$indice $id $workspace $icon $program $title"
-				[[ -z $alters ]] && alters=("$i") || alters=("$alters" "$i")
 			else
 				labelsnew[$i]=$(grep ${${(f)scopeNew}[$i][1,10]} $bd)
 			fi
@@ -73,36 +72,44 @@ analysis.scope ()
 			eval icon='$'$program
 			[[ -z $icon ]] && eval icon=$default
 			<<< "$indice $id $workspace $icon $program $title" >| $bd
-			alters=("1")
 		fi
 	else
 		contador=0
 	fi
+	scopeNewPosition="$(< $bd)"
 }
 
 analysis.exceptions ()
 {
 	case "$title" in
+		*"YouTube - "* ) program="YouTube";;
+		*"Facebook - "* ) program=facebook;;
 		*"the home for *NIX"* ) program="reddit";;
 		*"reddit:"* ) program="reddit";;
-		*"In -"* ) program="linkedin";;
+		*"LinkedIn - "* ) program="linkedin";;
 		*"Twitter -"* ) program="twitter";;
 		*"GitHub - "* || *"odilonscoelho"* ) program="github";;
 		*pulsemixer* ) program="pulsemixer";;
 		*"- VIM"* ) program="vim";;
-		*YouTube* ) program="YouTube"; title=${title//\-\ qutebrowser/};;
-		*"- SpankBang -"* || *"SpankBang:"* || *"SpankBanger:"* ) program="spankbang"; title="Private!";;
-		*"- XVIDEOS.COM -"* ) program="spankbang"; title="Private!";;
 		*ranger* ) program="ranger";;
 		*htop* ) program="htop";;
 		*Netflix* ) program="Netflix";;
 		WiFi* ) program="WiFiAudio";;
-		*"(hdbkp) - Sublime Text (UNREGISTERED)"* ) program=${$(xwinfo -i $id)//-/}; title=${title//\(hdbkp\)\ \-\ Sublime\ Text\ \(UNREGISTERED\)/};;
-		*"- Sublime Text (UNREGISTERED)"* ) program=${$(xwinfo -i $id)//-/}; title=${title//\-\ Sublime\ Text\ \(UNREGISTERED\)/};;
-		*"- qutebrowser"* ) program=${$(xwinfo -i $id)//-/}; title=${title//\-\ qutebrowser/};;
-		*"- Google Chrome"* ) program=${$(xwinfo -i $id)//-/}; title=${title//\-\ Google\ Chrome/};;
+		*"youtube-dl"* ) 
+			title=$(awk '{print $2,$7,$8}' <<< $title)
+			program=${$(xwinfo -i $id)//-/};;
+		*"- SpankBang -"* || *"SpankBang:"* || *"SpankBanger:"* ) 
+			program="spankbang"
+			title="Private!";;
+		*"- XVIDEOS.COM -"* ) 
+			program="spankbang"
+			title="Private!";;
 		* ) program=${$(xwinfo -i $id)//-/};;
 	esac
+	title=${title//\-\ Google\ Chrome/}
+	title=${title//\-\ qutebrowser/}
+	title=${title//\(hdbkp\)\ \-\ Sublime\ Text\ \(UNREGISTERED\)/}
+	title=${title//\-\ Sublime\ Text\ \(UNREGISTERED\)/}
 }
 
 analysis.base ()
@@ -112,7 +119,7 @@ analysis.base ()
 		workspaceFocused=$(( ${${(f)baseNew}[8]//\_NET\_CURRENT\_DESKTOP\(CARDINAL\) \= /} + 1 ))
 		if [[ $workspaceFocusedOld != $workspaceFocused ]]; then
 			eval workspace='$'W"$workspaceFocused"
-			<<< $workspace >| $bk
+			echo "%{T$fontWS}%{F$colorWSForeground}%{B$colorWSBackground} $workspace%{T- B- F-}" >| $bk
 			polybar-msg hook ws 1 
 		fi
 		windowFocused="${${(f)baseNew}[1]//\_NET\_ACTIVE\_WINDOW\(WINDOW\)\:\ window\ id\ \# /}"
@@ -120,37 +127,20 @@ analysis.base ()
 			9 ) windowFocused="${${windowFocused}//0x/0x00}";;
 			10 ) windowFocused="${${windowFocused}//0x/0x0}";;
 		esac
-		if [[ $windowFocusedOld != $windowFocused ]]; then
-			if [[ $controller == "base" ]]; then
-				polybar-msg hook x"$xhook" 2	
-				xhookWorkspace=$(grep "$windowFocused" $bd| cut -d ' ' -f 1)
-				xhook=$(grep --line-number "$windowFocused" $bd| cut -d ':' -f 1)
-				if [[ $xhookWorkspace == $workspaceFocused ]]; then
-					polybar-msg hook x"$xhook" 3
-					interval.polybar 
-				else
-					polybar-msg hook x"$xhook" 2 
-					interval.polybar 
-				fi	
+		if [[ $windowFocusedOld != $windowFocused && $controller == "base" ]]; then
+			polybar-msg hook x"$xhook" $optnUnFocused	
+			xhookWorkspace=$(grep "$windowFocused" $bd| cut -d ' ' -f 1)
+			xhook=$(grep --line-number "$windowFocused" $bd| cut -d ':' -f 1)
+			if [[ $xhookWorkspace == $workspaceFocused ]]; then
+				polybar-msg hook x"$xhook" $optnFocused 
+				interval.polybar 
 			else
-				xhook=$(grep --line-number "$windowFocused" $bd| cut -d ':' -f 1)
-				xhookWorkspace=$(grep "$windowFocused" $bd| cut -d ' ' -f 1)
+				polybar-msg hook x"$xhook" $optnUnFocused 
+				interval.polybar 
 			fi
 		else
-		 	if [[ $controller == "base" ]]; then
-				xhook=$(grep --line-number "$windowFocused" $bd| cut -d ':' -f 1)
-				xhookWorkspace=$(grep "$windowFocused" $bd| cut -d ' ' -f 1)
-					if [[ $xhookWorkspace == $workspaceFocused ]]; then
-						polybar-msg hook x"$xhook" $optnFocused
-						interval.polybar 
-					else
-						polybar-msg hook x"$xhook" $optnUnFocused 
-						interval.polybar 
-					fi
-		 	elif [[ $controller == "scope" ]]; then
-				xhookWorkspace=$(grep "$windowFocused" $bd| cut -d ' ' -f 1)
-				xhook=$(grep --line-number "$windowFocused" $bd| cut -d ':' -f 1)
-		 	fi
+			xhookWorkspace=$(grep "$windowFocused" $bd| cut -d ' ' -f 1)
+			xhook=$(grep --line-number "$windowFocused" $bd| cut -d ':' -f 1)
 		fi
 		windowFocusedOld=$windowFocused
 		workspaceFocusedOld=$workspaceFocused
@@ -160,36 +150,35 @@ analysis.base ()
 
 modules ()
 {
-	if [[ $contador -le 8 ]]; then
+	if [[ $contador -le $qtLabelMin ]]; then
 		optnUnFocused=2
 	else
 		optnUnFocused=4
 	fi
 	if [[ $contador -gt 0 ]]; then
-		[[ -z $xhook ]] && Continue=$contador || Continue=$xhook
-		if [[ $contador -lt $contadorOld ]]; then
-			for (( i=$(( $contador + 1 )); i <= $contadorOld; i++ ))
-			{
-			 	polybar-msg hook x"$i" $optnOff > /dev/null
-			 	interval.polybar
-			}
-		fi
-		for (( i=1; i < $Continue ; i++ ))
+		for (( i=$(( $contador + 1 )); i <= $contadorOld; i++ ))
 		{
-	 		polybar-msg hook x"$i" $optnUnFocused > /dev/null
-		 	interval.polybar 
+		 	polybar-msg hook x"$i" $optnOff > /dev/null
+		 	interval.polybar
 		}
-		if [[ $xhookWorkspace == $workspaceFocused ]]; then
-			polybar-msg hook x"$Continue" "$optnFocused"
-			interval.polybar 
-		elif [[ $xhookWorkspace != $workspaceFocused ]]; then
-			polybar-msg hook x"$Continue" "$optnUnFocused" 
-			interval.polybar 
-		fi
-		for (( i=$(( $Continue + 1 )); i <= $contador ; i++ ))
+		for (( i=1; i <= $contador ; i++ ))
 		{
-			polybar-msg hook x"$i" $optnUnFocused > /dev/null
-			interval.polybar 
+			analysis.bool "$i"
+			# Não houve alteração mas ela ganhou foco
+			if [[ $alters == "false" && $focused == "true" && $focusedOld == "false" ]]; then
+				polybar-msg hook x"$i" $optnFocused > /dev/null
+				interval.polybar
+			# Não houve alteração mas ela perdeu o foco
+			elif [[ $alters == "false" && $focused == "false" && $focusedOld == "true" ]]; then
+				polybar-msg hook x"$i" $optnUnFocused > /dev/null
+				interval.polybar
+			elif [[ $alters == "true" && $focused == "true" ]]; then
+				polybar-msg	hook x"$i" $optnFocused > /dev/null
+				interval.polybar
+			elif [[ $alters == "true" && $focused == "false" ]]; then
+				polybar-msg hook x"$i" $optnUnFocused > /dev/null
+				interval.polybar
+			fi
 		}
 	else
 		for (( i=1; i <= $contadorOld; i++ ))
@@ -200,24 +189,38 @@ modules ()
 	fi
 	contadorOld=$contador
 	scopeOld=$scopeNew
+	scopeOldPosition=$scopeNewPosition
 	[[ -n $xhook ]] && xhookOld=$xhook
 }
 
-create.vars ()
+analysis.bool ()
 {
 	if [[ $contador -gt 1 ]]; then
-		titleOld=${${(s: :)${(f)scopeOld}[$1]}[4,-1]}
-		titleNew=${${(s: :)${(f)scopeNew}[$1]}[4,-1]}
-		idOld=${${(s: :)${(f)scopeOld}[$1]}[1]}
-		idNew=${${(s: :)${(f)scopeNew}[$1]}[1]}
-		workspaceOld=$(( ${${(s: :)${(f)scopeOld}[$1]}[2]} + 1 ))
-		workspaceNew=$(( ${${(s: :)${(f)scopeNew}[$1]}[2]} + 1 ))
+		[[ ${${(f)scopeOldPosition}[$1]} != ${${(f)scopeNewPosition}[$1]} ]] && alters="true" || alters="false"
+		[[ $xhook == $1 ]] && focused="true" || focused="false"
+		[[ $1 == $xhookOld ]] && focusedOld="true" || focusedOld="false"
+		[[ $xhookWorkspace == $workspaceFocused ]] && workspaceFocusedStatus="true" || workspaceFocusedStatus="false"
 	else
-		titleOld=${scopeOld[15,-1]//$HOST/}
-		titleNew=${scopeNew[15,-1]//$HOST/}
-		idOld=${scopeOld[1,10]}
-		idNew=${scopeNew[1,10]}
-		workspaceOld=$(( ${scopeOld[13]} + 1 ))
-		workspaceNew=$(( ${scopeNew[13]} + 1 ))
+		[[ $scopeOldPosition != $scopeNewPosition ]] && alters="true" || alters="false"
+		[[ $xhook == $1 ]] && focused="true" || focused="false"
+		[[ $1 == $xhookOld ]] && focusedOld="true" || focusedOld="false"
+		[[ $xhookWorkspace == $workspaceFocused ]] && workspaceFocusedStatus="true" || workspaceFocusedStatus="false"
 	fi
+}
+
+analysis.NewVsOld ()
+{
+	titleOld=${${(s: :)${(f)scopeOldPosition}[$1]}[4,-1]}
+	titleNew=${${(s: :)${(f)scopeNewPosition}[$1]}[4,-1]}
+	idOld=${${(s: :)${(f)scopeOldPosition}[$1]}[1]}
+	idNew=${${(s: :)${(f)scopeNewPosition}[$1]}[1]}
+	workspaceOld=$(( ${${(s: :)${(f)scopeOldPosition}[$1]}[2]} + 1 ))
+	workspaceNew=$(( ${${(s: :)${(f)scopeNewPosition}[$1]}[2]} + 1 ))
+
+	titleOld=${scopeOldPosition[15,-1]//$HOST/}
+	titleNew=${scopeNewPosition[15,-1]//$HOST/}
+	idOld=${scopeOldPosition[1,10]}
+	idNew=${scopeNewPosition[1,10]}
+	workspaceOld=$(( ${scopeOldPosition[13]} + 1 ))
+	workspaceNew=$(( ${scopeNewPosition[13]} + 1 ))
 }
