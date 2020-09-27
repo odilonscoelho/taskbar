@@ -120,7 +120,7 @@ analysis.base ()
 		if [[ $workspaceFocusedOld != $workspaceFocused ]]; then
 			eval workspace='$'W"$workspaceFocused"
 			echo "%{T$fontWS}%{F$colorWSForeground}%{B$colorWSBackground} $workspace%{T- B- F-}" >| $bk
-			polybar-msg hook ws 1 
+			polybar-msg hook ws 1 > /dev/null
 		fi
 		windowFocused="${${(f)baseNew}[1]//\_NET\_ACTIVE\_WINDOW\(WINDOW\)\:\ window\ id\ \# /}"
 		case "$(wc -c <<< $windowFocused)" in
