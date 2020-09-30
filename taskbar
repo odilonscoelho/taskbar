@@ -5,13 +5,11 @@
 
 start ()
 {
-  >| $bk
-  . taskbar.program.zsh
-  init
-  while true; do
-    `main`
-    interval
-  done
+  :> $bk
+  # . valida.zsh
+  . taskbar.program
+  init.values
+  main
   interval
   start
 }
@@ -29,12 +27,12 @@ id ()
 
 interval ()
 {
-  sleep $intervalAlters
+  sleep $intervalAlters &&
 }
 
 interval.polybar ()
 {
-  sleep $intervalPolybar
+  sleep $intervalPolybar &&
 }
 
 configure ()
@@ -44,10 +42,10 @@ configure ()
 
 [[ -z $@ ]] && echo "usage : taskbar start|stop" || \
   case $1 in
-    start ) { dunstify -t 5000 "taskbar start" amarok_scripts & }; { start &> /dev/null & } || <<< "falha ao iniciar" ;;
-    stop ) { dunstify -t 5000 "taskbar stop" amarok_scripts & }; { stop &> /dev/null & } || <<< "taskbar não está em execução" ;;
+    start ) { dunstify -t 5000 "taskbar start" & }; { start &> /dev/null & } || <<< "falha ao iniciar" ;;
+    stop ) { dunstify -t 5000 "taskbar stop" & }; { stop &> /dev/null & } || <<< "taskbar não está em execução" ;;
     restart ) nohup $(sleep 2 && taskbar start) > /dev/null & { stop &> /dev/null & };;
     id ) id;;
     configure ) $@;;
-    * ) . taskbar.func.zsh; $@;;
+    * ) . taskbar.func; $@;;
   esac
