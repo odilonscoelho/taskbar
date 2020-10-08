@@ -6,7 +6,6 @@
 start ()
 {
   :> $bk
-  # . valida.zsh
   . taskbar.program
   init.values
   main

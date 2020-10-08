@@ -19,8 +19,6 @@ fullscreen ()
 	-b toggle,fullscreen
 }
 
-# bspwm
-
 blabel ()
 {
 	base="$(< $bd)"
@@ -82,25 +80,6 @@ floating ()
 }
 
 # i3wm
-labeli3 ()
-{
-	labelSize=$(($sizeLabel+16))
-	printf '%-30s %-'$labelSize's %16s' \
-	"%{B$colorBackgroundUnFocused}%{F$colorIconProgramUnFocused}%{T$fontProgram} $(awk -v linha=$1 'NR == linha {print $4}' $bd)" \
-	"%{F$colorForegroundUnFocused}%{T$fontLabelUnFocused}$(tail -c $sizeLabel <<< $(awk -v linha=$1 'NR == linha {print $6,$7,$8,$9,$10,$11}' $bd))" \
-	"%{F$colorIconWorkspaceUnFocused}%{T$fontWorkspace}$(awk -v linha=$1 ' NR == linha {print $3}' $bd) "
-}
-
-labeli3focused ()
-{
-	labelSize=$(($sizeLabel+16))
-	printf '%-30s %-'$labelSize's %16s' \
-	"%{B$colorBackgroundFocused}%{F$colorIconProgramFocused}%{T$fontProgram} $(awk -v linha=$1 'NR == linha {print $4}' $bd)" \
-	"%{F$colorForegroundFocused}%{T$fontLabelFocused}$(tail -c $sizeLabel <<< $(awk -v linha=$1 'NR == linha {print $6,$7,$8,$9,$10,$11}' $bd))" \
-	"%{F$colorIconWorkspaceFocused}%{T$fontWorkspace}$(awk -v linha=$1 ' NR == linha {print $3}' $bd) %{F- B-}"
-}
-
-
 i3floating ()
 {
 	i3-msg \
