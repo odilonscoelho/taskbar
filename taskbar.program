@@ -21,7 +21,7 @@ init.values ()
 				{
 					if [[ ${${(f)scopeNew}[$i]} != ${${(f)scopeOld}[$i]} ]];then
 						id=${${(s: :)${${(f)scopeNew}[$i]}}[1]}
-						indice=$(wmctrl -d |grep '^1'|cut -d ' ' -f 13)
+						indice=$(wmctrl -d |grep '^'${${(s: :)${${(f)scopeNew}[$i]}}[2]}''|cut -d ' ' -f 13)
 						workspace=${workspaces[w$indice]}
 						title="${${${(s: :)${${(f)scopeNew}[$i]}}[4,-1]//$HOST/}//N\/A /}"
 						unset program
@@ -40,7 +40,7 @@ init.values ()
 					contador=0
 				else
 					id=${${(s: :)${scopeNew}}[1]} 
-					indice=$(wmctrl -d |grep '^1'|cut -d ' ' -f 13)
+					indice=$(wmctrl -d |grep '^'${${(s: :)${scopeNew}}[2]}''|cut -d ' ' -f 13)
 					workspace=${workspaces[w$indice]}
 					title="${${${(s: :)${scopeNew}}[4,-1]//$HOST/}//N\/A /}"
 					unset program
