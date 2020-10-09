@@ -55,6 +55,44 @@ init.values ()
 			fi
 			scopeNewPosition="$(< $bd)"
 		}
+
+		analysis.base ()
+		{
+			if [[ $controller == "base" ]]; then
+				baseNew="$(xprop -root _NET_ACTIVE_WINDOW _NET_CURRENT_DESKTOP)"
+				if [[ $baseOld != $baseNew ]]; then
+					workspaceFocused=$(wmctrl -d |grep '^'${${(s: :)${(f)"${baseNew}"}[2]}[3]}''|cut -d ' ' -f 13)
+					windowFocused=${${(s: :)${(f)"${baseNew}"}[1]}[5,-1]}
+					case "$(wc -c <<< $windowFocused)" in
+						8 ) windowFocused="${${windowFocused}//0x/0x000}";;
+						9 ) windowFocused="${${windowFocused}//0x/0x00}";;
+						10 ) windowFocused="${${windowFocused}//0x/0x0}";;
+					esac
+					if [[ $windowFocusedOld != $windowFocused && $contador -gt 0 ]]; then
+						polybar-msg hook x"$xhook" $optnUnFocused > /dev/null
+						interval.polybar	
+						xhookWorkspace=$(grep "$windowFocused" $bd| cut -d ' ' -f 1)
+						xhook=$(grep --line-number "$windowFocused" $bd| cut -d ':' -f 1)
+						if [[ $xhookWorkspace == $workspaceFocused ]]; then
+							polybar-msg hook x"$xhook" $optnFocused > /dev/null
+							interval.polybar 
+						else
+							polybar-msg hook x"$xhook" $optnUnFocused > /dev/null
+							interval.polybar 
+						fi
+					else
+						xhookWorkspace=$(grep "$windowFocused" $bd| cut -d ' ' -f 1)
+						xhook=$(grep --line-number "$windowFocused" $bd| cut -d ':' -f 1)
+					fi
+					windowFocusedOld=$windowFocused
+					workspaceFocusedOld=$workspaceFocused
+					baseOld=$baseNew
+				fi
+			else
+				xhookWorkspace=$(grep "$windowFocused" $bd| cut -d ' ' -f 1)
+				xhook=$(grep --line-number "$windowFocused" $bd| cut -d ':' -f 1)
+			fi
+		}
 	else
 		analysis.scope ()
 		{
@@ -97,6 +135,49 @@ init.values ()
 				contador=0
 			fi
 			scopeNewPosition="$(< $bd)"
+		}
+
+		analysis.base ()
+		{
+			if [[ $controller == "base" ]]; then
+				baseNew="$(xprop -root _NET_ACTIVE_WINDOW _NET_CURRENT_DESKTOP)"
+				if [[ $baseOld != $baseNew ]]; then
+					workspaceFocused=$(( ${${(s: :)${(f)"${baseNew}"}[2]}[3]} + 1 ))
+					if [[ $workspaceFocusedOld != $workspaceFocused ]]; then
+						workspace=${workspaces[w$workspaceFocused]}
+						echo "%{T$fontWS}%{F$colorWSForeground}%{B$colorWSBackground} $workspace%{T- B- F-} " >| $bk
+						polybar-msg hook ws 1 > /dev/null
+						interval.polybar
+					fi
+					windowFocused=${${(s: :)${(f)"${baseNew}"}[1]}[5,-1]}
+					case "$(wc -c <<< $windowFocused)" in
+						9 ) windowFocused="${${windowFocused}//0x/0x00}";;
+						10 ) windowFocused="${${windowFocused}//0x/0x0}";;
+					esac
+					if [[ $windowFocusedOld != $windowFocused && $contador -gt 0 ]]; then
+						polybar-msg hook x"$xhook" $optnUnFocused > /dev/null
+						interval.polybar	
+						xhookWorkspace=$(grep "$windowFocused" $bd| cut -d ' ' -f 1)
+						xhook=$(grep --line-number "$windowFocused" $bd| cut -d ':' -f 1)
+						if [[ $xhookWorkspace == $workspaceFocused ]]; then
+							polybar-msg hook x"$xhook" $optnFocused > /dev/null
+							interval.polybar 
+						else
+							polybar-msg hook x"$xhook" $optnUnFocused > /dev/null
+							interval.polybar 
+						fi
+					else
+						xhookWorkspace=$(grep "$windowFocused" $bd| cut -d ' ' -f 1)
+						xhook=$(grep --line-number "$windowFocused" $bd| cut -d ':' -f 1)
+					fi
+					windowFocusedOld=$windowFocused
+					workspaceFocusedOld=$workspaceFocused
+					baseOld=$baseNew
+				fi
+			else
+				xhookWorkspace=$(grep "$windowFocused" $bd| cut -d ' ' -f 1)
+				xhook=$(grep --line-number "$windowFocused" $bd| cut -d ':' -f 1)
+			fi
 		}
 	fi
 }
@@ -151,49 +232,6 @@ analysis.exceptions ()
 	title=${title//\(hdbkp\)\ \-\ Sublime\ Text\ \(UNREGISTERED\)/}
 	title=${title//\-\ Sublime\ Text\ \(UNREGISTERED\)/}
 	title=${title//\-\ YouTube/}
-}
-
-analysis.base ()
-{
-	if [[ $controller == "base" ]]; then
-		baseNew="$(xprop -root _NET_ACTIVE_WINDOW _NET_CURRENT_DESKTOP)"
-		if [[ $baseOld != $baseNew ]]; then
-			workspaceFocused=$(( ${${(s: :)${(f)"${baseNew}"}[2]}[3]} + 1 ))
-			if [[ $workspaceFocusedOld != $workspaceFocused ]]; then
-				workspace=${workspaces[w$workspaceFocused]}
-				echo "%{T$fontWS}%{F$colorWSForeground}%{B$colorWSBackground} $workspace%{T- B- F-} " >| $bk
-				polybar-msg hook ws 1 > /dev/null
-				interval.polybar
-			fi
-			windowFocused=${${(s: :)${(f)"${baseNew}"}[1]}[5,-1]}
-			case "$(wc -c <<< $windowFocused)" in
-				9 ) windowFocused="${${windowFocused}//0x/0x00}";;
-				10 ) windowFocused="${${windowFocused}//0x/0x0}";;
-			esac
-			if [[ $windowFocusedOld != $windowFocused && $contador -gt 0 ]]; then
-				polybar-msg hook x"$xhook" $optnUnFocused > /dev/null
-				interval.polybar	
-				xhookWorkspace=$(grep "$windowFocused" $bd| cut -d ' ' -f 1)
-				xhook=$(grep --line-number "$windowFocused" $bd| cut -d ':' -f 1)
-				if [[ $xhookWorkspace == $workspaceFocused ]]; then
-					polybar-msg hook x"$xhook" $optnFocused > /dev/null
-					interval.polybar 
-				else
-					polybar-msg hook x"$xhook" $optnUnFocused > /dev/null
-					interval.polybar 
-				fi
-			else
-				xhookWorkspace=$(grep "$windowFocused" $bd| cut -d ' ' -f 1)
-				xhook=$(grep --line-number "$windowFocused" $bd| cut -d ':' -f 1)
-			fi
-			windowFocusedOld=$windowFocused
-			workspaceFocusedOld=$workspaceFocused
-			baseOld=$baseNew
-		fi
-	else
-		xhookWorkspace=$(grep "$windowFocused" $bd| cut -d ' ' -f 1)
-		xhook=$(grep --line-number "$windowFocused" $bd| cut -d ':' -f 1)
-	fi
 }
 
 modules ()
