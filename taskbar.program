@@ -69,16 +69,17 @@ init.values ()
 						10 ) windowFocused="${${windowFocused}//0x/0x0}";;
 					esac
 					if [[ $windowFocusedOld != $windowFocused && $contador -gt 0 ]]; then
+					    print $windowFocused > /tmp/taskbar_id_focused
 						polybar-msg hook x"$xhook" $optnUnFocused > /dev/null
-						interval.polybar	
+						interval.polybar
 						xhookWorkspace=$(grep "$windowFocused" $bd| cut -d ' ' -f 1)
 						xhook=$(grep --line-number "$windowFocused" $bd| cut -d ':' -f 1)
 						if [[ $xhookWorkspace == $workspaceFocused ]]; then
 							polybar-msg hook x"$xhook" $optnFocused > /dev/null
-							interval.polybar 
+							interval.polybar
 						else
 							polybar-msg hook x"$xhook" $optnUnFocused > /dev/null
-							interval.polybar 
+							interval.polybar
 						fi
 					else
 						xhookWorkspace=$(grep "$windowFocused" $bd| cut -d ' ' -f 1)
@@ -147,6 +148,7 @@ init.values ()
 						workspace=${workspaces[w$workspaceFocused]}
 						echo "%{T$fontWS}%{F$colorWSForeground}%{B$colorWSBackground} $workspace%{T- B- F-} " >| $bk
 						polybar-msg hook ws 1 > /dev/null
+						polybar-msg hook qws 1 > /dev/null
 						interval.polybar
 					fi
 					windowFocused=${${(s: :)${(f)"${baseNew}"}[1]}[5,-1]}
@@ -155,16 +157,17 @@ init.values ()
 						10 ) windowFocused="${${windowFocused}//0x/0x0}";;
 					esac
 					if [[ $windowFocusedOld != $windowFocused && $contador -gt 0 ]]; then
+					    print $windowFocused > /tmp/taskbar_id_focused # Arrumar essa gambiarra antes de subir pro github !
 						polybar-msg hook x"$xhook" $optnUnFocused > /dev/null
-						interval.polybar	
+						interval.polybar
 						xhookWorkspace=$(grep "$windowFocused" $bd| cut -d ' ' -f 1)
 						xhook=$(grep --line-number "$windowFocused" $bd| cut -d ':' -f 1)
 						if [[ $xhookWorkspace == $workspaceFocused ]]; then
 							polybar-msg hook x"$xhook" $optnFocused > /dev/null
-							interval.polybar 
+							interval.polybar
 						else
 							polybar-msg hook x"$xhook" $optnUnFocused > /dev/null
-							interval.polybar 
+							interval.polybar
 						fi
 					else
 						xhookWorkspace=$(grep "$windowFocused" $bd| cut -d ' ' -f 1)
@@ -204,10 +207,12 @@ main ()
 analysis.exceptions ()
 {
 	case "$title" in
+		*"telegram-cli"* ) program="TelegramDesktop";;
+		*"editor" || *"Editor" || *"micro" || *"Micro" ) program="Editor";;
 		*"YouTube - "* ) program="YouTube";;
 		*"Facebook - "* ) program=facebook;;
 		*"the home for *NIX"* ) program="reddit";;
-		*"reddit:"* ) program="reddit";;
+		*"reddit:"* || *": unixporn" || *": unixporn"* ) program="reddit";;
 		*"LinkedIn - "* ) program="linkedin";;
 		*"Twitter -"* ) program="twitter";;
 		*"GitHub - "* || *"- GitHub"  ) program="github";;
@@ -217,7 +222,7 @@ analysis.exceptions ()
 		*htop* ) program="htop";;
 		*Netflix* ) program="Netflix";;
 		WiFi* ) program="WiFiAudio";;
-		*"youtube-dl"* ) 
+		*"youtube-dl"* )
 			title=$(awk '{print $2,$7,$8}' <<< $title)
 			program=${$(xwinfo -i $id)//-/};;
 		*"- SpankBang -"* || *"SpankBang:"* || *"SpankBanger:"* ) 
@@ -228,6 +233,7 @@ analysis.exceptions ()
 			title="Private!";;
 	esac
 	title=${title//\-\ Google\ Chrome/}
+	title=${title//\-\ mpv/}
 	title=${title//\-\ qutebrowser/}
 	title=${title//\(hdbkp\)\ \-\ Sublime\ Text\ \(UNREGISTERED\)/}
 	title=${title//\-\ Sublime\ Text\ \(UNREGISTERED\)/}
@@ -243,7 +249,7 @@ modules ()
 				polybar-msg hook x"$i" $optnUnFocused > /dev/null
 				interval.polybar
 			done
-		fi		
+		fi
 	else
 		optnUnFocused=4
 		if [[ $contadorOld -le $qtLabelMin ]]; then
@@ -255,7 +261,7 @@ modules ()
 	fi
 	if [[ $contador -gt 0 ]]; then
 		# Vai desligar as posições que foram fechadas, por exemplo haviam 5 janelas abertas
-		# ao fechar uma delas a posição 5 precisa ser desligada e as outras 4 janelas serem ajustadas nas 4 primeiras 
+		# ao fechar uma delas a posição 5 precisa ser desligada e as outras 4 janelas serem ajustadas nas 4 primeiras
 		# posiçoes da barra
 		for (( i=$(( $contador + 1 )); i <= $contadorOld; i++ ))
 		{
@@ -290,7 +296,7 @@ modules ()
 	else
 		for (( i=1; i <= $contadorOld; i++ ))
 		{
-		 	polybar-msg hook x"$i" $optnOff > /dev/null 
+		 	polybar-msg hook x"$i" $optnOff > /dev/null
 		 	interval.polybar
 		}
 	fi

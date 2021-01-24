@@ -2,35 +2,98 @@
 
 foco ()
 {
-	wmctrl -i -a \
-	"$(awk -v linha=$1 'NR == linha {print $2}' $bd)"
+    bd=/tmp/taskbar
+	if [[ ${${(s: :)${(f)"$(wmctrl -m)"}[1]}[2]} == "bspwm" ]]; then
+		wmctrl -i -a \
+		"$(awk -v linha=$1 'NR == linha {print $2}' $bd)"
+	# Qtile rule
+	elif [[ ${${(s: :)${(f)"$(wmctrl -m)"}[1]}[2]} == "LG3D" ]]; then	
+		local idh="$(awk -v linha=$1 'NR == linha {print $2}' $bd)"
+	    local  forward_for=$(awk -v linha=$1 'NR == linha {print $1}' $bd)	    
+	    local  id_focused=$(< /tmp/taskbar_id_focused)	    
+	    local  actual=${${(s: :)$(grep $id_focused < /tmp/taskbar)}[1]}	    		
+		local  idd="$(conversorHxD $idh)"		
+		local  minimized=${${(s: :)$(qtile-cmd -o window "$idd" -f info |grep 'minimized')//\,/}[2]}		
+		[[ "$minimized" == "True" ]] && { qtile-cmd -o window "$idd" -f toggle_minimize }		
+		[[ "$forward_for" != "$actual" && -n "$forward_for" ]] && qtile-cmd -o screen -f togglegroup --args "$forward_for"
+		qtile-cmd -o window "$idd" -f focus		
+	fi
 }
 
 close ()
 {
-	wmctrl -i -c \
-	"$(awk -v linha=$1 'NR == linha {print $2}' $bd)"
+	if [[ ${${(s: :)${(f)"$(wmctrl -m)"}[1]}[2]} == "bspwm" ]]; then
+		wmctrl -i -c \
+		"$(awk -v linha=$1 'NR == linha {print $2}' $bd)"
+	elif [[ ${${(s: :)${(f)"$(wmctrl -m)"}[1]}[2]} == "LG3D" ]]; then
+		idh="$(awk -v linha=$1 'NR == linha {print $2}' $bd)"
+		idd="$(conversorHxD $idh)"
+		qtile-cmd -o window $idd -f kill
+	fi
 }
 
 fullscreen ()
 {
-	wmctrl -i -r \
-	"$(awk -v linha=$1 'NR == linha {print $2}' $bd)" \
-	-b toggle,fullscreen
+	if [[ ${${(s: :)${(f)"$(wmctrl -m)"}[1]}[2]} == "bspwm" ]]; then
+		wmctrl -i -r \
+		"$(awk -v linha=$1 'NR == linha {print $2}' $bd)" \
+		-b toggle,fullscreen
+	elif [[ ${${(s: :)${(f)"$(wmctrl -m)"}[1]}[2]} == "LG3D" ]]; then
+		idh="$(awk -v linha=$1 'NR == linha {print $2}' $bd)"
+		idd="$(conversorHxD $idh)"
+		qtile-cmd -o window $idd -f toggle_fullscreen
+	fi	
 }
 
 blabel ()
 {
 	base="$(< $bd)"
 	if [[ $(wc -l <<< "$base") -gt 1 ]]; then
+		program=${${(s: :)${(f)${base}}[$1]}[5]}
 		iconProgram=${${(s: :)${(f)${base}}[$1]}[4]}
 		iconWorkspace=${${(s: :)${(f)${base}}[$1]}[3]}
 		label=$(tail -c $sizeLabel <<< ${${(s: :)${(f)${base}}[$1]}[6,-1]})
 	else
+		program=${${(s: :)base}[5]}
 		iconProgram=${${(s: :)base}[4]}
 		iconWorkspace=${${(s: :)base}[3]}
 		label=$(tail -c $sizeLabel <<< ${${(s: :)base}[6,-1]})
-	fi	
+	fi
+}
+
+analysis.exceptions ()
+{
+	case "$(sed -n $1'p' $bd |cut -d ' ' -f5-)" in
+		*"telegram-cli"* ) program="TelegramDesktop";;
+		*"YouTube - "* ) program="YouTube";;
+		*"Facebook - "* ) program=facebook;;
+		*"the home for *NIX"* ) program="reddit";;
+		*"reddit:"* ) program="reddit";;
+		*"LinkedIn - "* ) program="linkedin";;
+		*"Twitter -"* ) program="twitter";;
+		*"GitHub - "* || *"- GitHub"  ) program="github";;
+		*pulsemixer* ) program="pulsemixer";;
+		*"- VIM"* ) program="vim";;
+		*ranger* ) program="ranger";;
+		*htop* ) program="htop";;
+		*Netflix* ) program="Netflix";;
+		WiFi* ) program="WiFiAudio";;
+		*"youtube-dl"* )
+			title=$(awk '{print $2,$7,$8}' <<< $title)
+			program=${$(xwinfo -i $id)//-/};;
+		*"- SpankBang -"* || *"SpankBang:"* || *"SpankBanger:"* )
+			program="spankbang"
+			title="Private!";;
+		*"- XVIDEOS.COM -"* )
+			program="spankbang"
+			title="Private!";;
+	esac
+	title=${title//\-\ Google\ Chrome/}
+	title=${title//\-\ mpv/}
+	title=${title//\-\ qutebrowser/}
+	title=${title//\(hdbkp\)\ \-\ Sublime\ Text\ \(UNREGISTERED\)/}
+	title=${title//\-\ Sublime\ Text\ \(UNREGISTERED\)/}
+	title=${title//\-\ YouTube/}
 }
 
 labelmin ()
@@ -45,38 +108,91 @@ labelmin ()
 label ()
 {
 	blabel $@
-	labelSize=$(($sizeLabel+16))
+	analysis.exceptions $@
 
-	printf '%-30s %-'$labelSize's %16s' \
-	"%{B$colorBackgroundUnFocused}%{F$colorIconProgramUnFocused}%{T$fontProgram} $iconProgram" \
-	"%{F$colorForegroundUnFocused}%{T$fontLabelUnFocused}$label" \
-	"%{F$colorIconWorkspaceUnFocused}%{T$fontWorkspace}$iconWorkspace %{F- B-}"
+	if [[ -n $colorsIcons[$program] ]];then
+		labelSize=$(($sizeLabel+16))
+		printf '%-30s %-'$labelSize's %16s' \
+		"%{B$colorBackgroundUnFocused}%{F${colorsIcons[$program]}}%{T$fontProgram} $iconProgram" \
+		"%{F$colorForegroundUnFocused}%{T$fontLabelUnFocused}$label" \
+		"%{F$colorIconWorkspaceUnFocused}%{T$fontWorkspace}$iconWorkspace %{F- B-}"
+	else
+		labelSize=$(($sizeLabel+16))
+		printf '%-30s %-'$labelSize's %16s' \
+		"%{B$colorBackgroundUnFocused}%{F$colorIconProgramUnFocused}%{T$fontProgram} $iconProgram" \
+		"%{F$colorForegroundUnFocused}%{T$fontLabelUnFocused}$label" \
+		"%{F$colorIconWorkspaceUnFocused}%{T$fontWorkspace}$iconWorkspace %{F- B-}"
+	fi
 }
 
+
 labelfocused ()
+{
+	blabel $@
+	analysis.exceptions $@
+
+	if [[ -n $colorsIcons[$program] ]];then
+		labelSize=$(($sizeLabel+16))
+		printf '%-30s %-'$labelSize's %16s' \
+		"%{B$colorBackgroundFocused}%{F${colorsIcons[$program]}}%{T$fontProgram} $iconProgram" \
+		"%{F$colorForegroundFocused}%{T$fontLabelFocused}$label" \
+		"%{F$colorIconWorkspaceFocused}%{T$fontWorkspace}$iconWorkspace %{F- B-}"
+	else
+		labelSize=$(($sizeLabel+16))
+		printf '%-30s %-'$labelSize's %16s' \
+		"%{B$colorBackgroundFocused}%{F$colorIconProgramFocused}%{T$fontProgram} $iconProgram" \
+		"%{F$colorForegroundFocused}%{T$fontLabelFocused}$label" \
+		"%{F$colorIconWorkspaceFocused}%{T$fontWorkspace}$iconWorkspace %{F- B-}"
+	fi
+}
+
+labelpowerline ()
 {
 	blabel $@
 	labelSize=$(($sizeLabel+16))
 
 	printf '%-30s %-'$labelSize's %16s' \
-	"%{B$colorBackgroundFocused}%{F$colorIconProgramFocused}%{T$fontProgram} $iconProgram" \
+	"%{B$colorBackgroundUnFocused F$backgroundTaskbar T11}%{B$colorBackgroundUnFocused}%{F$colorIconProgramUnFocused}%{T$fontProgram} $iconProgram" \
+	"%{F$colorForegroundUnFocused}%{T$fontLabelUnFocused}$label" \
+	"%{F$colorIconWorkspaceUnFocused}%{T$fontWorkspace}$iconWorkspace%{F$colorBackgroundUnFocused B$backgroundTaskbar T11}"
+}
+
+labelfocusedpowerline ()
+{
+	blabel $@
+	labelSize=$(($sizeLabel+16))
+
+	printf '%-30s %-'$labelSize's %16s' \
+	"%{B$colorBackgroundFocused F$backgroundTaskbar T11}%{B$colorBackgroundFocused}%{F$colorIconProgramFocused}%{T$fontProgram} $iconProgram" \
 	"%{F$colorForegroundFocused}%{T$fontLabelFocused}$label" \
-	"%{F$colorIconWorkspaceFocused}%{T$fontWorkspace}$iconWorkspace %{F- B-}"
+	"%{F$colorIconWorkspaceFocused}%{T$fontWorkspace}$iconWorkspace%{F$colorBackgroundFocused B$backgroundTaskbar T11}"
 }
 
 
 tiled ()
 {
-	bspc node \
-	$(awk -v linha=$1 'NR == linha {print $2}' $bd) \
-	-t tiled
+	if [[ ${${(s: :)${(f)"$(wmctrl -m)"}[1]}[2]} == "bspwm" ]]; then
+		bspc node \
+		$(awk -v linha=$1 'NR == linha {print $2}' $bd) \
+		-t tiled
+	elif [[ ${${(s: :)${(f)"$(wmctrl -m)"}[1]}[2]} == "LG3D" ]]; then
+		idh="$(awk -v linha=$1 'NR == linha {print $2}' $bd)"
+		idd="$(conversorHxD $idh)"
+		qtile-cmd -o window $idd -f toggle_minimize
+	fi		
 }
 
 floating ()
 {
-	bspc node \
-	$(awk -v linha=$1 'NR == linha {print $2}' $bd) \
-	-t floating
+	if [[ ${${(s: :)${(f)"$(wmctrl -m)"}[1]}[2]} == "bspwm" ]]; then
+		bspc node \
+		$(awk -v linha=$1 'NR == linha {print $2}' $bd) \
+		-t floating
+	elif [[ ${${(s: :)${(f)"$(wmctrl -m)"}[1]}[2]} == "LG3D" ]]; then
+		idh="$(awk -v linha=$1 'NR == linha {print $2}' $bd)"
+		idd="$(conversorHxD $idh)"
+		qtile-cmd -o window $idd -f toggle_floating
+	fi	
 }
 
 # i3wm
