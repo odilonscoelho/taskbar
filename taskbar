@@ -1,7 +1,7 @@
 #!/bin/zsh
 
 # Importa configurações
-. ~/.local/bin/taskbar.conf
+. taskbar.conf
 
 start ()
 {
@@ -40,12 +40,13 @@ configure ()
 	# echo "# path para taskbar\nPATH=\$PATH:$PWD" >> $HOME/.zshrc
 }
 
+twm="${${(s: :)${(f)"$(wmctrl -m)"}[1]}[2]}"
+
 [[ -z $@ ]] && echo "usage : taskbar start|stop" || \
 	  case $1 in
 	    start ) { dunstify -t 5000 "taskbar start" & }; { start &> /dev/null & } || <<< "falha ao iniciar" ;;
 	    stop ) { dunstify -t 5000 "taskbar stop" & }; { stop &> /dev/null & } || <<< "taskbar não está em execução" ;;
-	    restart ) nohup $(sleep 2 && taskbar start) > /dev/null & { stop &> /dev/null & };;
-	    id ) id;;
+	    restart ) { nohup $(sleep 2 && taskbar start) &> /dev/null & } ; { stop &> /dev/null & };;
 	    configure ) $@;;
 	    * ) . taskbar.func; $@;;
 	  esac
