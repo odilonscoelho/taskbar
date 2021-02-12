@@ -18,13 +18,34 @@ info.node ()
         info[${${(s#:#)i}[1]}]=${${(s#:#)i}[2]}
 }
 
+conversor.HxD ()
+{
+    typeset -A arrayHxD
+    arrayHxD=([a]=10 [b]=11 [c]=12 [d]=13 [e]=14 [f]=15 [x]=0)
+
+    hexadecimal="${@}"
+    len="$#hexadecimal"
+
+    for control in {$len..1}
+    {
+    	digit=${hexadecimal[$control]}
+    	[[ $digit =~ '[[:alpha:]]' ]] && 
+    	    { (( decimal = decimal + $(( arrayHxD[$digit] * (16**${control_calc:-0}) )) )) } || 
+    	        { (( decimal = decimal + $(( digit * (16**${control_calc:-0}) )) )) }
+    	
+    	control_calc=$((++control_calc))
+    }
+
+    print $decimal
+}
+
 foco ()
 {
     info.node $1
     bd=/tmp/taskbar
 	if [[ $twm == "bspwm" ]]; then
 	    if [[ "$info[hidden]" == "false"  ]]; then
-	        if [[ $info[id] == $(conversorHxD $(< /tmp/taskbar_id_focused)) ]]; then
+	        if [[ $info[id] == $(conversor.HxD "$(< /tmp/taskbar_id_focused)") ]]; then
 	            bspc node $info[id] --flag hidden=on
 	        else
 	            bspc node $info[id] -f
@@ -38,7 +59,7 @@ foco ()
 	    local  forward_for=$(awk -v linha=$1 'NR == linha {print $1}' $bd)	    
 	    local  id_focused=$(< /tmp/taskbar_id_focused)	    
 	    local  actual=${${(s: :)$(grep $id_focused < /tmp/taskbar)}[1]}	    		
-		local  idd="$(conversorHxD $idh)"		
+		local  idd="$(conversor.HxD $idh)"		
 		local  minimized=${${(s: :)$(qtile-cmd -o window "$idd" -f info |grep 'minimized')//\,/}[2]}		
 		[[ "$forward_for" != "$actual" && -n "$forward_for" ]] &&
 		    {
@@ -62,7 +83,7 @@ close ()
 		"$(awk -v linha=$1 'NR == linha {print $2}' $bd)"
 	elif [[ $twm == "LG3D" ]]; then
 		idh="$(awk -v linha=$1 'NR == linha {print $2}' $bd)"
-		idd="$(conversorHxD $idh)"
+		idd="$(conversor.HxD $idh)"
 		qtile-cmd -o window $idd -f kill
 	fi
 }
@@ -75,7 +96,7 @@ fullscreen ()
 		-b toggle,fullscreen
 	elif [[ $twm == "LG3D" ]]; then
 		idh="$(awk -v linha=$1 'NR == linha {print $2}' $bd)"
-		idd="$(conversorHxD $idh)"
+		idd="$(conversor.HxD $idh)"
 		qtile-cmd -o window $idd -f toggle_fullscreen
 	fi	
 }
@@ -88,7 +109,7 @@ tiled ()
 		-t tiled
 	elif [[ $twm == "LG3D" ]]; then
 		idh="$(awk -v linha=$1 'NR == linha {print $2}' $bd)"
-		idd="$(conversorHxD $idh)"
+		idd="$(conversor.HxD $idh)"
 		qtile-cmd -o window $idd -f toggle_minimize
 	fi		
 }
@@ -101,7 +122,7 @@ floating ()
 		-t floating
 	elif [[ $twm == "LG3D" ]]; then
 		idh="$(awk -v linha=$1 'NR == linha {print $2}' $bd)"
-		idd="$(conversorHxD $idh)"
+		idd="$(conversor.HxD $idh)"
 		qtile-cmd -o window $idd -f toggle_floating
 	fi	
 }
